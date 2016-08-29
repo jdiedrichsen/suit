@@ -1,0 +1,207 @@
+function suit_isolate_seg(Source,varargin)
+% Function to isolate the cerebellum and brainsteam using the spm12
+% segmentation to create a cerebellum mask for subsecuent normalization to  
+% a specialized template. This function is part of SUIT.
+%__________________________________________________________________________
+% INPUT:
+%       Whole brain anatomical scan
+%__________________________________________________________________________
+% OUTPUT:
+%   c_<Source>
+%       The cropped anatomical containing the cerebellum
+%   c_<Source>_pcereb
+%       The binarized mask after thresholded at p=0.2 for hand correction
+%   <Source>_seg1 - <Source>_seg2
+%       Probabilities maps of Gray matter(seg1) or White matter(seg2)
+%__________________________________________________________________________
+% OPTIONS
+%   maskp           Probability value for final mask higher value 
+%                   returns a tighter mask. defualt 0.2
+%   keeptempfiles   set to 1 to keep temporal files
+%   bbox            Use a bounding box different from default feed as 
+%                   [-x,x;-y,y;-z,z] in mm in MNI space.
+%__________________________________________________________________________
+% Carlos Hernandez-Castillo 2016
+% SUIT Copyright (C) 2010 
+% Use of the SUIT software should be cited as:
+% Diedrichsen, J. (2006). A spatially unbiased atlas template of the human
+% cerebellum. Neuroimage.
+
+% ------------------------------------------------------------------------
+% Set the defaults.
+% ------------------------------------------------------------------------
+maskp=0.2;                        % threshold of final cerebellar mask
+keeptempfiles=0;                  % remove temporal files
+global defaults;
+if (~isstruct(defaults))
+    error('Start SPM to use SUIT_isolate');
+end;
+
+global defaults_suit; 
+if (~isstruct(defaults_suit))
+    suit_defaults;
+end;
+
+names=fieldnames(defaults_suit.isolate); 
+for i=1:length(names)
+    eval([names{i} '= defaults_suit.isolate.' names{i} ';']); 
+end;
+bbox=bb;
+
+% Get the defaults from varargin
+vararginoptions(varargin,{'maskp','keeptempfiles','bbox'});
+
+% -----------------------------------------------------------------
+% check spm-version
+% -----------------------------------------------------------------
+spmVer=spm('Ver');
+if (strcmp(spmVer,'SPM5')||strcmp(spmVer,'SPM8'))
+   error('Install SPM 12 or newer version to use SUIT_isolate_seg');
+end
+
+% -----------------------------------------------------------------
+% Get Source image
+% -----------------------------------------------------------------
+if (nargin<1 || isempty(Source))
+    Source=spm_select(1,'image','Get Source Image');
+end;
+
+[source_dir,Sname,ext,~]=spm_fileparts(Source);
+    
+if (isempty(source_dir))
+    source_dir=pwd;
+end;
+
+% ------------------------------------------------------------------
+% Segmentation
+% ------------------------------------------------------------------
+    J=[]; 
+    J.channel.vols = {[source_dir,'/',Sname,ext]};
+    J.channel.biasreg = 0.001;
+    J.channel.biasfwhm = 60;
+    J.channel.write = [0 0];
+    J.tissue(1).tpm = {[prior_dir,'/TPM_SUIT.nii,1']};
+    J.tissue(1).ngaus = 1;
+    J.tissue(1).native = [1 0];
+    J.tissue(1).warped = [0 0];
+    J.tissue(2).tpm = {[prior_dir,'/TPM_SUIT.nii,2']};
+    J.tissue(2).ngaus = 1;
+    J.tissue(2).native = [1 0];
+    J.tissue(2).warped = [0 0];
+    J.tissue(3).tpm = {[prior_dir,'/TPM_SUIT.nii,3']};
+    J.tissue(3).ngaus = 1;
+    J.tissue(3).native = [0 0];
+    J.tissue(3).warped = [0 0];
+    J.tissue(4).tpm = {[prior_dir,'/TPM_SUIT.nii,4']};
+    J.tissue(4).ngaus = 1;
+    J.tissue(4).native = [0 0];
+    J.tissue(4).warped = [0 0];
+    J.tissue(5).tpm = {[prior_dir,'/TPM_SUIT.nii,5']};
+    J.tissue(5).ngaus = 2;
+    J.tissue(5).native = [0 0];
+    J.tissue(5).warped = [0 0];
+    J.tissue(6).tpm = {[prior_dir,'/TPM_SUIT.nii,6']};
+    J.tissue(6).ngaus = 2;
+    J.tissue(6).native = [0 0];
+    J.tissue(6).warped = [0 0];
+    J.tissue(7).tpm = {[prior_dir,'/TPM_SUIT.nii,7']};
+    J.tissue(7).ngaus = 3;
+    J.tissue(7).native = [0 0];
+    J.tissue(7).warped = [0 0];
+    J.tissue(8).tpm = {[prior_dir,'/TPM_SUIT.nii,8']};
+    J.tissue(8).ngaus = 4;
+    J.tissue(8).native = [0 0];
+    J.tissue(8).warped = [0 0];
+
+    J.warp.mrf = 1;
+    J.warp.cleanup = 1;
+    J.warp.reg = [0 0.001 0.5 0.05 0.2];
+    J.warp.affreg = 'mni';
+    J.warp.fwhm = 0;
+    J.warp.samp = 3;
+    J.warp.write = [0 1];
+
+    spm_preproc_run(J,'run'); 
+  
+% -----------------------------------------------------------------
+% crop the volumes to a standard bounding box
+% -----------------------------------------------------------------
+    fprintf('Cropping...');
+    [defy,maty]=spmdefs_get_def({[source_dir,'/y_',Sname,ext]});
+    bbox=[bbox(1,1),bbox(2,1),bbox(3,1);bbox(1,2),bbox(2,2),bbox(3,2);...
+            bbox(1,2),bbox(2,1),bbox(3,1);bbox(1,1),bbox(2,2),bbox(3,2);...
+            bbox(1,2),bbox(2,2),bbox(3,1);bbox(1,1),bbox(2,2),bbox(3,1);...
+            bbox(1,1),bbox(2,1),bbox(3,2);bbox(1,2),bbox(2,1),bbox(3,2)];
+    BOUND=spmdefs_transformM(defy,maty,bbox);
+    V=spm_vol([source_dir,'/',Sname,ext]);
+    BOUND=round((BOUND' ./ repmat(diag(V.mat(1:3,1:3)),1,8))-...
+        (repmat(V.mat(1:3,4),1,8) ./ repmat(diag(V.mat(1:3,1:3)),1,8)));
+    cropped_bb.x = min(BOUND(1,:)):max(BOUND(1,:));
+    cropped_bb.y = min(BOUND(2,:)):max(BOUND(2,:));
+    cropped_bb.z = min(BOUND(3,:)):max(BOUND(3,:));
+
+    crop_image=[source_dir,'/c_',Sname,ext];
+    crop_seg1=[source_dir,'/c_',Sname,'_seg1',ext];
+    crop_seg2=[source_dir,'/c_',Sname,'_seg2',ext];
+    try
+        spmj_crop_vol([source_dir,'/',Sname,ext],crop_image,cropped_bb.x,cropped_bb.y,cropped_bb.z);
+        spmj_crop_vol([source_dir,'/c1',Sname,ext],crop_seg1,cropped_bb.x,cropped_bb.y,cropped_bb.z);
+        spmj_crop_vol([source_dir,'/c2',Sname,ext],crop_seg2,cropped_bb.x,cropped_bb.y,cropped_bb.z);
+    catch
+        error(['Cropping failed.','Make sure that the original image is in LPI orientation.']);
+    end
+    
+    fprintf(' done\n');
+ 
+% -----------------------------------------------------------------
+% creating final mask
+% -----------------------------------------------------------------
+s1 = spm_vol(crop_seg1);
+s2 = spm_vol(crop_seg2);
+S1 = spm_read_vols(s1);
+S2 = spm_read_vols(s2);
+M = S1+S2;
+M(M < maskp) = 0;
+M(M > 0) = 1;
+save_vol(M,[source_dir,'/c_',Sname,'_pcereb',ext],s1);
+ 
+% -----------------------------------------------------------------
+% cleaning
+% -----------------------------------------------------------------
+if (keeptempfiles==0)
+    movefile([source_dir,'/c1',Sname,ext],[source_dir,'/',Sname,'_seg1',ext]);
+    movefile([source_dir,'/c2',Sname,ext],[source_dir,'/',Sname,'_seg2',ext]);
+    rm_imgfile([source_dir,'/c_',Sname,'_seg1'],ext);
+    rm_imgfile([source_dir,'/c_',Sname,'_seg2'],ext);
+    rm_imgfile([source_dir,'/',Sname,'_seg8'],'.mat');
+    rm_imgfile([source_dir,'/y_',Sname],ext);
+
+end;
+            
+end
+
+
+function rm_imgfile(name,ext)
+if (exist([name ext],'file'))
+    delete([name ext]);
+end;
+if (strcmp(ext,'.img'))
+    if (exist([name '.hdr'],'file'))
+        delete([name '.hdr']);
+    end;
+    if (exist([name '.mat'],'file'))
+        delete([name '.mat']);
+    end;
+end;
+end
+
+function VR=save_vol(DATA,name,V)
+VR    = struct(		'fname',name,...
+    'dim',		[V.dim(1:3)],...
+    'dt',   [spm_type('float32') 0],...
+    'mat',		V.mat,...
+    'pinfo',	[1 0 0]',...
+    'descrip',	'temp');
+VR    = spm_create_vol(VR);
+spm_write_vol(VR,DATA);
+end
