@@ -100,29 +100,28 @@ source.help    = {'Anatomical image(s) to perform the isolation algorithm on.'
                   'The first cropped and a probabistic isolation will be performed. '};
 source.filter = 'image';
 source.ufilter = '.*';
-source.num     = [1 inf];
+source.num     = [inf 1];
 
 % ---------------------------------------------------------------------
 % bb Bounding box
 % ---------------------------------------------------------------------
 threshold_prop         = cfg_entry;
-threshold_prop.tag     = 'maskp';
-threshold_prop.name    = 'Probability threshold for cerebellar isolation map';
-threshold_prop.help    = {'The minimal probability (cerebellar white + gray matter' 
-                          'to be included into the cerebellar isolation mask (default = 0.2)'};
-threshold_prop.strtype = 'e';
-threshold_prop.num     = [1 1];
-threshold_prop.def     = @(val)suit_get_defaults('isolate.maskp', val{:});
+threshold_prop.tag     = 'isolate_threshold';
+threshold_prop.name    = 'Probab';
+cerebellar_range.help    = {'The value of cerebellar gray matter thickness (in mm) determines how far from the outer edge of the cerebellar white matter gray matter, voxels are surely classified as belonging to the cerebellum. This parameter determines the boundary between cerebral and cerebellar gray matter.'};
+cerebellar_range.strtype = 'e';
+cerebellar_range.num     = [1 1];
+cerebellar_range.def     = @(val)suit_get_defaults('isolate.cerebellar_range', val{:});
 
 
 isolate_seg     = cfg_exbranch; 
-isolate_seg.tag = 'isolate_seg'; 
+isolate_seg.tag = 'isolation_seg'; 
 isolate_seg.name = 'Segmentation & Isolation'; 
-isolate_seg.val     = {source bb_crop threshold_prop} ;
-isolate_seg.help    = {
+isolate.val     = {esubjs bb_crop threshold} ;
+isolate.help    = {
     'Isolation of the cerebellum from the surrounding tissue'
     }';
-isolate_seg.prog = @suit_isolate_seg;
+isolate.prog = @suit_isolateseg;
 
 
 
