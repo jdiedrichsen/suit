@@ -17,9 +17,13 @@ function suit_isolate_seg(Source,varargin)
 % OPTIONS
 %   maskp           Probability value for final mask higher value 
 %                   returns a tighter mask. defualt 0.2
-%   keeptempfiles   set to 1 to keep temporal files
-%   bbox            Use a bounding box different from default feed as 
+%   bb              Use a bounding box different from default feed as 
 %                   [-x,x;-y,y;-z,z] in mm in MNI space.
+%   keeptempfiles   set to 1 to keep temporal files
+%                   If selected the probability maps will be stored as
+%                   c*<Source>.nii, where c1 = cerebellar gray matter, 
+%                   c2 = cerebellar white matter, c3 = cortical gray matter
+%                   c4 = cortical white matter.
 %__________________________________________________________________________
 % Carlos Hernandez-Castillo 2016
 % SUIT Copyright (C) 2010 
@@ -30,8 +34,7 @@ function suit_isolate_seg(Source,varargin)
 % ------------------------------------------------------------------------
 % Set the defaults.
 % ------------------------------------------------------------------------
-maskp=0.2;                        % threshold of final cerebellar mask
-keeptempfiles=0;                  % remove temporal files
+
 global defaults;
 if (~isstruct(defaults))
     error('Start SPM to use SUIT_isolate');
@@ -42,14 +45,10 @@ if (~isstruct(defaults_suit))
     suit_defaults;
 end;
 
-names=fieldnames(defaults_suit.isolate); 
+names=fieldnames(defaults_suit.isolate_seg); 
 for i=1:length(names)
-    eval([names{i} '= defaults_suit.isolate.' names{i} ';']); 
+    eval([names{i} '= defaults_suit.isolate_seg.' names{i} ';']); 
 end;
-bbox=bb;
-
-% Get the defaults from varargin
-vararginoptions(varargin,{'maskp','keeptempfiles','bbox'});
 
 % -----------------------------------------------------------------
 % check spm-version
@@ -58,6 +57,8 @@ spmVer=spm('Ver');
 if (strcmp(spmVer,'SPM5')||strcmp(spmVer,'SPM8'))
    error('Install SPM 12 or newer version to use SUIT_isolate_seg');
 end
+
+if (~isstruct(Source)) % Check for Job structure or single file
 
 % -----------------------------------------------------------------
 % Get Source image
@@ -72,6 +73,9 @@ if (isempty(source_dir))
     source_dir=pwd;
 end;
 
+% Get the defaults from varargin
+vararginoptions(varargin,{'maskp','keeptempfiles','bb'});
+
 % ------------------------------------------------------------------
 % Segmentation
 % ------------------------------------------------------------------
@@ -80,35 +84,35 @@ end;
     J.channel.biasreg = 0.001;
     J.channel.biasfwhm = 60;
     J.channel.write = [0 0];
-    J.tissue(1).tpm = {[prior_dir,'/TPM_SUIT.nii,1']};
+    J.tissue(1).tpm = {[prior_dir,'/',priors,',1']};
     J.tissue(1).ngaus = 1;
     J.tissue(1).native = [1 0];
     J.tissue(1).warped = [0 0];
-    J.tissue(2).tpm = {[prior_dir,'/TPM_SUIT.nii,2']};
+    J.tissue(2).tpm = {[prior_dir,'/',priors,',2']};
     J.tissue(2).ngaus = 1;
     J.tissue(2).native = [1 0];
     J.tissue(2).warped = [0 0];
-    J.tissue(3).tpm = {[prior_dir,'/TPM_SUIT.nii,3']};
+    J.tissue(3).tpm = {[prior_dir,'/',priors,',3']};
     J.tissue(3).ngaus = 1;
-    J.tissue(3).native = [0 0];
+    J.tissue(3).native = [1 0];
     J.tissue(3).warped = [0 0];
-    J.tissue(4).tpm = {[prior_dir,'/TPM_SUIT.nii,4']};
+    J.tissue(4).tpm = {[prior_dir,'/',priors,',4']};
     J.tissue(4).ngaus = 1;
-    J.tissue(4).native = [0 0];
+    J.tissue(4).native = [1 0];
     J.tissue(4).warped = [0 0];
-    J.tissue(5).tpm = {[prior_dir,'/TPM_SUIT.nii,5']};
+    J.tissue(5).tpm = {[prior_dir,'/',priors,',5']};
     J.tissue(5).ngaus = 2;
     J.tissue(5).native = [0 0];
     J.tissue(5).warped = [0 0];
-    J.tissue(6).tpm = {[prior_dir,'/TPM_SUIT.nii,6']};
+    J.tissue(6).tpm = {[prior_dir,'/',priors,',6']};
     J.tissue(6).ngaus = 2;
     J.tissue(6).native = [0 0];
     J.tissue(6).warped = [0 0];
-    J.tissue(7).tpm = {[prior_dir,'/TPM_SUIT.nii,7']};
+    J.tissue(7).tpm = {[prior_dir,'/',priors,',7']};
     J.tissue(7).ngaus = 3;
     J.tissue(7).native = [0 0];
     J.tissue(7).warped = [0 0];
-    J.tissue(8).tpm = {[prior_dir,'/TPM_SUIT.nii,8']};
+    J.tissue(8).tpm = {[prior_dir,'/',priors,',8']};
     J.tissue(8).ngaus = 4;
     J.tissue(8).native = [0 0];
     J.tissue(8).warped = [0 0];
@@ -128,10 +132,10 @@ end;
 % -----------------------------------------------------------------
     fprintf('Cropping...');
     [defy,maty]=spmdefs_get_def({[source_dir,'/y_',Sname,ext]});
-    bbox=[bbox(1,1),bbox(2,1),bbox(3,1);bbox(1,2),bbox(2,2),bbox(3,2);...
-            bbox(1,2),bbox(2,1),bbox(3,1);bbox(1,1),bbox(2,2),bbox(3,2);...
-            bbox(1,2),bbox(2,2),bbox(3,1);bbox(1,1),bbox(2,2),bbox(3,1);...
-            bbox(1,1),bbox(2,1),bbox(3,2);bbox(1,2),bbox(2,1),bbox(3,2)];
+    bbox=[bb(1,1),bb(2,1),bb(3,1);bb(1,2),bb(2,2),bb(3,2);...
+            bb(1,2),bb(2,1),bb(3,1);bb(1,1),bb(2,2),bb(3,2);...
+            bb(1,2),bb(2,2),bb(3,1);bb(1,1),bb(2,2),bb(3,1);...
+            bb(1,1),bb(2,1),bb(3,2);bb(1,2),bb(2,1),bb(3,2)];
     BOUND=spmdefs_transformM(defy,maty,bbox);
     V=spm_vol([source_dir,'/',Sname,ext]);
     BOUND=round((BOUND' ./ repmat(diag(V.mat(1:3,1:3)),1,8))-...
@@ -177,9 +181,16 @@ if (keeptempfiles==0)
     rm_imgfile([source_dir,'/y_',Sname],ext);
 
 end;
-            
+        
+
+else % loop for Job strucure
+    s=Source.source;
+    for i=1:length(s)
+        suit_isolate_seg(s{i}{1},'maskp',Source.maskp,'keeptempfiles',Source.keeptempfiles,'bb',Source.bb); 
+    end;  
 end
 
+end
 
 function rm_imgfile(name,ext)
 if (exist([name ext],'file'))
