@@ -35,7 +35,7 @@ defaults_suit.isolate.affreg.regtype = 'mni';
 defaults_suit.isolate.affreg.weight = '';
 defaults_suit.isolate.affreg.WF='';
 defaults_suit.isolate.affreg.smooth2=4;
-defaults_suit.isolate.bb=[-76 76;-108 -6;-70 11]; % Bounding box for the cropped image in atlas space
+defaults_suit.isolate.bb=[-76 76;-108 -6;-75 11]; % Bounding box for the cropped image in atlas space
 defaults_suit.isolate.white_cutoff=0.2;
 defaults_suit.isolate.prior_FWHM=[5 5 5];
 defaults_suit.isolate.cerebral_range=3.5;       % distance from cortical white matter 
@@ -44,6 +44,14 @@ defaults_suit.isolate.range_FWHM=[3 3 3];       % smoothing on range map to appr
 defaults_suit.isolate.iterations=2;           % Number of iterations
 defaults_suit.isolate.crop='crop';         % 'none': No cropping of image
 defaults_suit.isolate.keeptempfiles=0;        % Keep temporary files (0/1)
+
+% isolate_seg
+defaults_suit.isolate_seg.keeptempfiles=0;
+defaults_suit.isolate_seg.maskp=0.2;
+defaults_suit.isolate_seg.bb=[-76 76;-108 -6;-70 11];
+defaults_suit.isolate_seg.prior_dir=[spm_Dir '/toolbox/suit/priors'];
+defaults_suit.isolate_seg.priors='TPM_SUIT.nii';
+
 
 defaults_suit.normalise.template_dir=[spm_Dir '/toolbox/suit/templates'];
 defaults_suit.normalise.prior_dir=[spm_Dir '/toolbox/suit/priors'];
