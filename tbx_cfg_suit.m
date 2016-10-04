@@ -92,18 +92,52 @@ isolate.prog = @suit_run_isolate;
 % ISOLATE_SEG  
 % Segmentation and isolation 
 % ---------------------------------------------------------------------
-source         = cfg_files;
-source.tag     = 'source';
-source.name    = 'Source Image(s)';
-source.help    = {'Anatomical image(s) to perform the isolation algorithm on.' 
-                  'Multiple images are allowed and will be used together for improved segmentation'
-                  'The first cropped and a probabistic isolation will be performed. '};
-source.filter = 'image';
-source.ufilter = '.*';
-source.num     = [1 inf];
+sourceSeg         = cfg_files;
+sourceSeg.tag     = 'source';
+sourceSeg.name    = 'Subject Image(s)';
+sourceSeg.help    = {'List of channels of one subject.'
+                    'When loading multiple channels, select the T1 first'
+                    'All images for different channels MUST be coregistered and resliced to the T1 (first channel)'};
+sourceSeg.filter = 'image';
+sourceSeg.ufilter = '.*';
+sourceSeg.num     = [1 inf];
+
+% ---------------------------------------------------------------------
+% subj Subject
+% ---------------------------------------------------------------------
+subjSeg         = cfg_branch;
+subjSeg.tag     = 'subj';
+subjSeg.name    = 'Subject';
+subjSeg.val     = {sourceSeg};
+subjSeg.help    = {'Data for this subject. The same parameters are used within subject.'};
+
+% % ---------------------------------------------------------------------
+% % Channels
+% % ---------------------------------------------------------------------
+schan         = cfg_repeat;
+schan.tag     = 'schan';
+schan.name    = 'Inputs';
+schan.help    = {'Anatomical image(s) to perform the isolation algorithm on.' 
+                  'Multiple images (Channels e.g. T1 ,T2, PD) are allowed and will be used together for improved segmentation'
+                  'By default only one channel is needed (T1), if more channels will be used only select the images after the T1'
+                  'All images for different channels MUST be coregistered and resliced to the T1 (first channel)'
+                  'To load multiple subjects click in "New: Subject Images(s)",then add the corresponding image(s)'};
+schan.values  = {sourceSeg};
+schan.num     = [1 Inf];
 
 % ---------------------------------------------------------------------
 % bb Bounding box
+% ---------------------------------------------------------------------
+bb_seg         = cfg_entry;
+bb_seg.tag     = 'bb';
+bb_seg.name    = 'Bounding box';
+bb_seg.help    = {'The bounding box (in mm) for cropping  the anatomical image. This bounding box is defined in atlas space and and will be translated into indidual space after affine registration.'};
+bb_seg.strtype = 'e';
+bb_seg.num     = [3 2];
+bb_seg.def     = @(val)suit_get_defaults('isolate_seg.bb', val{:});
+
+% ---------------------------------------------------------------------
+% Probability threshold
 % ---------------------------------------------------------------------
 threshold_prop         = cfg_entry;
 threshold_prop.tag     = 'maskp';
@@ -112,13 +146,28 @@ threshold_prop.help    = {'The minimal probability (cerebellar white + gray matt
                           'to be included into the cerebellar isolation mask (default = 0.2)'};
 threshold_prop.strtype = 'e';
 threshold_prop.num     = [1 1];
-threshold_prop.def     = @(val)suit_get_defaults('isolate.maskp', val{:});
+threshold_prop.def     = @(val)suit_get_defaults('isolate_seg.maskp', val{:});
 
+% ---------------------------------------------------------------------
+% Keep temporal files
+% ---------------------------------------------------------------------
+keepFiles           = cfg_entry;
+keepFiles.tag       = 'keeptempfiles';
+keepFiles.name      = 'Keep temporal files';
+keepFiles.help      = {'Set to 1 to keep temporal files created during the isolation procedure,'
+                       'segmetation images including cerebellar gray/white matter,' 
+                       'cortical gray/white matter. (default = 0)'};
+keepFiles.strtype = 'e';
+keepFiles.num     = [1 1];
+keepFiles.def     = @(val)suit_get_defaults('isolate_seg.keeptempfiles', val{:});
 
+% ---------------------------------------------------------------------
+% Isolate_seg unit
+% ---------------------------------------------------------------------
 isolate_seg     = cfg_exbranch; 
 isolate_seg.tag = 'isolate_seg'; 
 isolate_seg.name = 'Segmentation & Isolation'; 
-isolate_seg.val     = {source bb_crop threshold_prop} ;
+isolate_seg.val     = {schan bb_seg threshold_prop keepFiles};
 isolate_seg.help    = {
     'Isolation of the cerebellum from the surrounding tissue'
     }';
