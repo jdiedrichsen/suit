@@ -62,14 +62,17 @@ if (strcmp(spmVer,'SPM5')||strcmp(spmVer,'SPM8'))
    error('Install SPM 12 or newer version to use SUIT_isolate_seg');
 end
 
-if (~isstruct(Source)) % Check for Job structure or single file
-
 % -----------------------------------------------------------------
 % Get Source image
 % -----------------------------------------------------------------
 if (nargin<1 || isempty(Source))
-    Source=spm_select(1,'image','Get Source Image');
+    spmIn=spm_select(Inf,'image','Get Source Image(s)');
+    for n=1:size(spmIn,1)
+        Source{n}=spmIn(n,:);
+    end
 end;
+
+if (~isstruct(Source)) % Check for Job structure or single file
 
 [source_dir,Sname,ext,~]=spm_fileparts(Source{1});
     
