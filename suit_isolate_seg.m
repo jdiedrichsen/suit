@@ -67,7 +67,7 @@ if (nargin<1 || isempty(Source))
     Source=spm_select(1,'image','Get Source Image');
 end;
 
-[source_dir,Sname,ext,~]=spm_fileparts(Source);
+[source_dir,Sname,ext,~]=spm_fileparts(Source{1});
     
 if (isempty(source_dir))
     source_dir=pwd;
@@ -80,10 +80,13 @@ vararginoptions(varargin,{'maskp','keeptempfiles','bb'});
 % Segmentation
 % ------------------------------------------------------------------
     J=[]; 
-    J.channel.vols = {[source_dir,'/',Sname,ext]};
-    J.channel.biasreg = 0.001;
-    J.channel.biasfwhm = 60;
-    J.channel.write = [0 0];
+    for chan=1:length(Source)
+        volumen=Source{chan};
+        J.channel(chan).vols = {volumen};
+        J.channel(chan).biasreg = 0.001;
+        J.channel(chan).biasfwhm = 60;
+        J.channel(chan).write = [0 0];
+    end
     J.tissue(1).tpm = {[prior_dir,'/',priors,',1']};
     J.tissue(1).ngaus = 1;
     J.tissue(1).native = [1 0];
@@ -175,6 +178,8 @@ save_vol(M,[source_dir,'/c_',Sname,'_pcereb',ext],s1);
 if (keeptempfiles==0)
     movefile([source_dir,'/c1',Sname,ext],[source_dir,'/',Sname,'_seg1',ext]);
     movefile([source_dir,'/c2',Sname,ext],[source_dir,'/',Sname,'_seg2',ext]);
+    rm_imgfile([source_dir,'/c3',Sname],ext);
+    rm_imgfile([source_dir,'/c4',Sname],ext);
     rm_imgfile([source_dir,'/c_',Sname,'_seg1'],ext);
     rm_imgfile([source_dir,'/c_',Sname,'_seg2'],ext);
     rm_imgfile([source_dir,'/',Sname,'_seg8'],'.mat');
@@ -186,7 +191,7 @@ end;
 else % loop for Job strucure
     s=Source.source;
     for i=1:length(s)
-        suit_isolate_seg(s{i}{1},'maskp',Source.maskp,'keeptempfiles',Source.keeptempfiles,'bb',Source.bb); 
+        suit_isolate_seg(s{i},'maskp',Source.maskp,'keeptempfiles',Source.keeptempfiles,'bb',Source.bb); 
     end;  
 end
 
