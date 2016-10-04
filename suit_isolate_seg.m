@@ -4,7 +4,11 @@ function suit_isolate_seg(Source,varargin)
 % a specialized template. This function is part of SUIT.
 %__________________________________________________________________________
 % INPUT:
-%       Whole brain anatomical scan
+%       Cell array of Whole brain anatomical scan (T1)
+%       Additional channels (T2, PD, etc.) can be used to improve
+%       isolation, In order to add more channels include them as a
+%       different element in the cell array.
+%       All channels must be corregistered and resliced to the T1.
 %__________________________________________________________________________
 % OUTPUT:
 %   c_<Source>
