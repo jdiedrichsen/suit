@@ -26,8 +26,8 @@ function suit_isolate_seg(Source,varargin)
 %   keeptempfiles   set to 1 to keep temporal files
 %                   If selected the probability maps will be stored as
 %                   c*<Source>.nii, where c1 = cerebellar gray matter, 
-%                   c2 = cerebellar white matter, c3 = cortical gray matter
-%                   c4 = cortical white matter.
+%                   c2 = cerebellar white matter, c7 = cortical gray matter
+%                   c8 = cortical white matter.
 %__________________________________________________________________________
 % Carlos Hernandez-Castillo 2016
 % SUIT Copyright (C) 2010 
@@ -103,28 +103,28 @@ vararginoptions(varargin,{'maskp','keeptempfiles','bb'});
     J.tissue(2).native = [1 0];
     J.tissue(2).warped = [0 0];
     J.tissue(3).tpm = {[prior_dir,'/',priors,',3']};
-    J.tissue(3).ngaus = 1;
-    J.tissue(3).native = [1 0];
+    J.tissue(3).ngaus = 2;
+    J.tissue(3).native = [0 0];
     J.tissue(3).warped = [0 0];
     J.tissue(4).tpm = {[prior_dir,'/',priors,',4']};
-    J.tissue(4).ngaus = 1;
-    J.tissue(4).native = [1 0];
+    J.tissue(4).ngaus = 4;
+    J.tissue(4).native = [0 0];
     J.tissue(4).warped = [0 0];
     J.tissue(5).tpm = {[prior_dir,'/',priors,',5']};
-    J.tissue(5).ngaus = 2;
+    J.tissue(5).ngaus = 3;
     J.tissue(5).native = [0 0];
     J.tissue(5).warped = [0 0];
     J.tissue(6).tpm = {[prior_dir,'/',priors,',6']};
-    J.tissue(6).ngaus = 2;
+    J.tissue(6).ngaus = 3;
     J.tissue(6).native = [0 0];
     J.tissue(6).warped = [0 0];
     J.tissue(7).tpm = {[prior_dir,'/',priors,',7']};
-    J.tissue(7).ngaus = 3;
-    J.tissue(7).native = [0 0];
+    J.tissue(7).ngaus = 1;
+    J.tissue(7).native = [1 0];
     J.tissue(7).warped = [0 0];
     J.tissue(8).tpm = {[prior_dir,'/',priors,',8']};
-    J.tissue(8).ngaus = 4;
-    J.tissue(8).native = [0 0];
+    J.tissue(8).ngaus = 1;
+    J.tissue(8).native = [1 0];
     J.tissue(8).warped = [0 0];
 
     J.warp.mrf = 1;
@@ -185,8 +185,8 @@ save_vol(M,[source_dir,'/c_',Sname,'_pcereb',ext],s1);
 if (keeptempfiles==0)
     movefile([source_dir,'/c1',Sname,ext],[source_dir,'/',Sname,'_seg1',ext]);
     movefile([source_dir,'/c2',Sname,ext],[source_dir,'/',Sname,'_seg2',ext]);
-    rm_imgfile([source_dir,'/c3',Sname],ext);
-    rm_imgfile([source_dir,'/c4',Sname],ext);
+    rm_imgfile([source_dir,'/c7',Sname],ext);
+    rm_imgfile([source_dir,'/c8',Sname],ext);
     rm_imgfile([source_dir,'/c_',Sname,'_seg1'],ext);
     rm_imgfile([source_dir,'/c_',Sname,'_seg2'],ext);
     rm_imgfile([source_dir,'/',Sname,'_seg8'],'.mat');
