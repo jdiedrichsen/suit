@@ -1,12 +1,12 @@
 function suit = tbx_cfg_suit
 % SPM Configuration file for the suit toolbox
-% v.3.0 
+% v.3.1 
 % (c) Joern Diedrichsen (j.diedrichsen@ucl.ac.uk)  
 % joern.diedrichsen@googlemail.com
 
 % $Id: tbs_cfg_rwls.m 2222 2010-05-17 11:08:47Z joern $
 
-rev = '$Rev: 3.0$';
+rev = '$Rev: 3.1$';
 addpath(fullfile(spm('dir'),'toolbox','suit'));
 
 % global defaults_suit; 
@@ -84,8 +84,94 @@ isolate.name    = 'Isolation';
 isolate.val     = {esubjs bb_crop cerebral_range cerebellar_range} ;
 isolate.help    = {
     'Isolation of the cerebellum from the surrounding tissue'
+    'This is the original algorithm - for better performance use Segmentation & Isolation'
     }';
 isolate.prog = @suit_run_isolate;
+
+% ---------------------------------------------------------------------
+% ISOLATE_SEG  
+% Segmentation and isolation 
+% ---------------------------------------------------------------------
+sourceSeg         = cfg_files;
+sourceSeg.tag     = 'source';
+sourceSeg.name    = 'Subject Image(s)';
+sourceSeg.help    = {'List of channels of one subject.'
+                    'When loading multiple channels, select the T1 first'
+                    'All images for different channels MUST be coregistered and resliced to the T1 (first channel)'};
+sourceSeg.filter = 'image';
+sourceSeg.ufilter = '.*';
+sourceSeg.num     = [1 inf];
+
+% ---------------------------------------------------------------------
+% subj Subject
+% ---------------------------------------------------------------------
+subjSeg         = cfg_branch;
+subjSeg.tag     = 'subj';
+subjSeg.name    = 'Subject';
+subjSeg.val     = {sourceSeg};
+subjSeg.help    = {'Data for this subject. The same parameters are used within subject.'};
+
+% % ---------------------------------------------------------------------
+% % Channels
+% % ---------------------------------------------------------------------
+schan         = cfg_repeat;
+schan.tag     = 'schan';
+schan.name    = 'Inputs';
+schan.help    = {'Anatomical image(s) to perform the isolation algorithm on.' 
+                  'Multiple images (Channels e.g. T1 ,T2, PD) are allowed and will be used together for improved segmentation.'
+                  'By default only one channel is needed (T1), if more channels will be used only select the images after the T1.'
+                  'All images for different channels MUST be coregistered and resliced to the T1 (first channel)'
+                  'To load multiple subjects click in "New: Subject Images(s)",then add the corresponding image(s)'};
+schan.values  = {sourceSeg};
+schan.num     = [1 Inf];
+
+% ---------------------------------------------------------------------
+% bb Bounding box
+% ---------------------------------------------------------------------
+bb_seg         = cfg_entry;
+bb_seg.tag     = 'bb';
+bb_seg.name    = 'Bounding box';
+bb_seg.help    = {'The bounding box (in mm) for cropping  the anatomical image. This bounding box is defined in MNI space and and will be translated into indidual space after affine registration.'};
+bb_seg.strtype = 'e';
+bb_seg.num     = [3 2];
+bb_seg.def     = @(val)suit_get_defaults('isolate_seg.bb', val{:});
+
+% ---------------------------------------------------------------------
+% Probability threshold
+% ---------------------------------------------------------------------
+threshold_prop         = cfg_entry;
+threshold_prop.tag     = 'maskp';
+threshold_prop.name    = 'Probability threshold for cerebellar isolation map';
+threshold_prop.help    = {'The minimal probability (cerebellar white + gray matter' 
+                          'to be included into the cerebellar isolation mask (default = 0.2)'};
+threshold_prop.strtype = 'e';
+threshold_prop.num     = [1 1];
+threshold_prop.def     = @(val)suit_get_defaults('isolate_seg.maskp', val{:});
+
+% ---------------------------------------------------------------------
+% Keep temporal files
+% ---------------------------------------------------------------------
+keepFiles           = cfg_entry;
+keepFiles.tag       = 'keeptempfiles';
+keepFiles.name      = 'Keep temporary files';
+keepFiles.help      = {'Set to 1 to keep temporary files created during the isolation procedure, including:'
+                       'segmetation images of cerebellar gray/white matter, cortical gray/white matter,'
+                       'and transformation matrix (default = 0)'};
+keepFiles.strtype = 'e';
+keepFiles.num     = [1 1];
+keepFiles.def     = @(val)suit_get_defaults('isolate_seg.keeptempfiles', val{:});
+
+% ---------------------------------------------------------------------
+% Isolate_seg unit
+% ---------------------------------------------------------------------
+isolate_seg     = cfg_exbranch; 
+isolate_seg.tag = 'isolate_seg'; 
+isolate_seg.name = 'Segmentation & Isolation'; 
+isolate_seg.val     = {schan bb_seg threshold_prop keepFiles};
+isolate_seg.help    = {
+    'Isolation of the cerebellum from the surrounding tissue'
+    }';
+isolate_seg.prog = @suit_isolate_seg;
 
 
 
@@ -1011,7 +1097,7 @@ suit.name    = 'SUIT';
 suit.help    = {
     'The spatially unbiased infra-tentorial template (SUIT) toolbox provides a more accurate normalization of the cerebellum and the brainstem than other common normalization methods.'
     ''
-    'For help and more information see: http://www.icn.ucl.ac.uk/motorcontrol/imaging/suit.htm'
+    'For help and more information see: http://diedrichsenlab.org/imaging/suit.htm'
     ''
     'Please cite:'
     'Diedrichsen, J. (2006). A spatially unbiased atlas template of the human cerebellum. Neuroimage, 33, 1, p. 127-138.'
@@ -1021,7 +1107,7 @@ suit.help    = {
     'Diedrichsen, J. & Zotow, E. (2015). Surface-based display of volume-averaged cerebellar imaging data.'
     ''
     }';
-suit.values  = {isolate normalise normalise_dartel normalise_dentate reslice reslice_dartel reslice_inv summarize flatmap};
+suit.values  = {isolate_seg normalise_dartel normalise_dentate reslice_dartel summarize flatmap isolate normalise reslice reslice_inv };
 
 
 %------------------------------------------------------------------------

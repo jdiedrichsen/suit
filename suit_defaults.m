@@ -45,6 +45,14 @@ defaults_suit.isolate.iterations=2;           % Number of iterations
 defaults_suit.isolate.crop='crop';         % 'none': No cropping of image
 defaults_suit.isolate.keeptempfiles=0;        % Keep temporary files (0/1)
 
+% isolate_seg
+defaults_suit.isolate_seg.keeptempfiles=0;
+defaults_suit.isolate_seg.maskp=0.2;
+defaults_suit.isolate_seg.bb=[-76 76;-108 -6;-70 11];
+defaults_suit.isolate_seg.prior_dir=[spm_Dir '/toolbox/suit/priors'];
+defaults_suit.isolate_seg.priors='TPM_SUIT.nii';
+
+
 defaults_suit.normalise.template_dir=[spm_Dir '/toolbox/suit/templates'];
 defaults_suit.normalise.prior_dir=[spm_Dir '/toolbox/suit/priors'];
 defaults_suit.normalise.template_dir=[spm_Dir '/toolbox/suit/templates'];
