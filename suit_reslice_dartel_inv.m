@@ -7,9 +7,13 @@ function suit_reslice_dartel_inv(job)
 %   job: Structure with fields:
 % 
 %       job.Affine:     Affine Transform parameter file (Affine*.mat)
-%       job.flowfield:  Flowfield file (u_*)
+%       job.flowfield:  Flowfield file (u_a*.nii)
 %       job.resample:   Images that need to be resliced. If this field
-%                       doesn't exist, It will reslice the Lobular atlas
+%                       doesn't exist, It will reslice the SUIT Lobular 
+%                       atlas into the native space.
+%       job.ref         Reference image for final geometry of the ouput. 
+%                       e.g. initial T1. If this field doesn't exist, final
+%                       image will have the same size than SUIT template.
 %__________________________________________________________________________
 % OUTPUT:
 %   iw_<source_name>:   The resliced source images.
@@ -39,8 +43,11 @@ Def{1} = y(:,:,:,1)*M(1,1) + y(:,:,:,2)*M(1,2) + y(:,:,:,3)*M(1,3) + M(1,4);
 Def{2} = y(:,:,:,1)*M(2,1) + y(:,:,:,2)*M(2,2) + y(:,:,:,3)*M(2,3) + M(2,4);
 Def{3} = y(:,:,:,1)*M(3,1) + y(:,:,:,2)*M(3,2) + y(:,:,:,3)*M(3,3) + M(3,4);
 
+% Check if reference image was provided
+if (~isfield(job,'ref'));job.ref={LobAtlas};end
+
 % Inverse deformation
-VT = spm_vol(LobAtlas);
+VT = spm_vol(char(job.ref));
 M0      = mat;
 M1      = inv(VT.mat);
 M0(4,:) = [0 0 0 1];
@@ -53,8 +60,8 @@ for i=1:size(job.resample,1),
     V = spm_vol(char(job.resample{i}));
     M = inv(V.mat);
     [~,nam,ext] = spm_fileparts(char(job.resample{i}));
-    [pth,~,~] = spm_fileparts(char(job.flowfield));
-    ofname = fullfile(pth,['iw_',nam,ext]);
+    [pth,naff,~] = spm_fileparts(char(job.flowfield));
+    ofname = fullfile(pth,['iw_',nam,'_',naff,ext]);
 
     Vo = struct('fname',ofname,...
                 'dim',[size(invDef{1},1) size(invDef{1},2) size(invDef{1},3)],...
