@@ -8,8 +8,10 @@ function suit_mni2suit(input,varargin)
 % VARARGIN:
 %   def:    'mni2suit' (defualt)   Direction of the trasnformation
 %           'suit2mni'
-%   mask:   set to 1 to mask image before transformation, this creates a
+%   mask:   Set to 1 to mask image before transformation, this creates a
 %           new file with prefix 'm_' to be used as input.
+%   Interp: Interpolation, defualt is nearest neighbour (0) 
+%           set to 1 for trilinear interpolation 
 % 
 % OUTPUT:
 %           Nifti image with prefix 'Wm2s_' for transformation from MNI 
@@ -17,9 +19,10 @@ function suit_mni2suit(input,varargin)
 %_______________________________________________________________________
 % Carlos Hernandez 2018
 
-def = 'mni2suit';
-mask = 0;
-vararginoptions(varargin,{'def','mask'});
+def     = 'mni2suit';
+mask    = 0;
+Interp  = 0;
+vararginoptions(varargin,{'def','mask','Interp'});
 
 % Template Location
 spm_Dir = fileparts(which('spm'));
@@ -67,15 +70,15 @@ VO = spm_create_vol(VO(i));
 % Apply deformation
 for p=1:VD(1).dim(3),
 	M  = spm_matrix([0 0 p]);
-	x1 = spm_slice_vol(VD(1), M, VD(1).dim(1:2),1);
-	x2 = spm_slice_vol(VD(2), M, VD(1).dim(1:2),1);
-	x3 = spm_slice_vol(VD(3), M, VD(1).dim(1:2),1);
+	x1 = spm_slice_vol(VD(1), M, VD(1).dim(1:2),Interp);
+	x2 = spm_slice_vol(VD(2), M, VD(1).dim(1:2),Interp);
+	x3 = spm_slice_vol(VD(3), M, VD(1).dim(1:2),Interp);
 	for i=1:length(VI),
 		M     = inv(VI(i).mat);
 		y1    = M(1,1)*x1+M(1,2)*x2+M(1,3)*x3+M(1,4);
 		y2    = M(2,1)*x1+M(2,2)*x2+M(2,3)*x3+M(2,4);
 		y3    = M(3,1)*x1+M(3,2)*x2+M(3,3)*x3+M(3,4);
-		img   = spm_sample_vol(VI(i),y1,y2,y3,1);
+		img   = spm_sample_vol(VI(i),y1,y2,y3,Interp);
 		VO(i) = spm_write_plane(VO(i),img,p);
 	end;
 end;
