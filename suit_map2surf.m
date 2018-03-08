@@ -50,7 +50,7 @@ stats=@nanmean;         % How are different sampling depth integrated?
 % For foci data 
 depth_tolerance = 3;   % How many mm above or below the surface is it allowed to lie? 
 
-vararginoptions(varargin,{'pial','white','space','stats','ignore_zeros'});
+vararginoptions(varargin,{'pial','white','space','stats','ignore_zeros','depths'});
 numDepths=length(depths);
 
 SCCSid   = '3.1';
