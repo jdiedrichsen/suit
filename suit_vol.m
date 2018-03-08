@@ -4,7 +4,7 @@ function V = suit_vol(source,varargin)
 % affine matrix. Always check that the calculated voxel volume is correct.
 %
 % Input:    Cell array with binary images(Masks) to calculate volume or
-%           resliced cerebellar atlas.
+%           resliced cerebellar atlas. No need of cell for single image.
 %
 % Atlas:    If you use the flag 'Atlas' as a second argument, the function
 %           will return the volume of each of the regions in the
@@ -17,24 +17,26 @@ function V = suit_vol(source,varargin)
 %       dir:    Directory of the source
 %       vox:    Number of voxels per region
 %       vmm:    Volume in mm3 per region
-%       Vsize:  volume of one voxel
+%       Vsize:  Volume of one voxel
 %       reg:    List of regions of SUIT atlas
 %
 % Example:
 %
 %   Cerebellar volume using the mask from suit_isolate_seg:
 %
-%       V = suit_vol({c_<name>_pcereb.nii});
+%       V = suit_vol({'c_<name>_pcereb.nii'});   
 %
 %   Volume of each lobuli using the resliced atlas in native space:
 %   
-%       V = suit_vol({iw_Cerebellar-SUIT-<name>},'Atlas');
+%       V = suit_vol({'iw_Cerebellar-SUIT-<name>'},'Atlas');
 % _______________________________________________________________________
 % Carlos R. Hernandez-Castillo 2018
 
+if (iscell(source)); source=char(source); end;
+
 if isempty(varargin)
-    for i = 1:length(source)
-        input = source{i};
+    for i = 1:size(source,1)
+        input = source(i,:);
         [source_dir,Sname,~,~]=spm_fileparts(input);
         if (isempty(source_dir))
             source_dir=pwd;
@@ -69,8 +71,8 @@ namereg={'Left I_IV','Right I_IV','Left V','Right V',...
     'Left Fastigial','Right Fastigial'};
 
 if strcmp(varargin{1},'Atlas')
-    for i = 1:length(source)
-        input = source{i};
+    for i = 1:size(source,1)
+        input = source(i,:);
         [source_dir,Sname,~,~]=spm_fileparts(input);
         if (isempty(source_dir))
             source_dir=pwd;
