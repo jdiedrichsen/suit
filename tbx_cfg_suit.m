@@ -1083,6 +1083,527 @@ flatmap.prog = @suit_run_flatmap;
 
 
 % ---------------------------------------------------------------------
+% ISOLATE_NEO 
+% source Source Image
+% ---------------------------------------------------------------------
+sourceNeo         = cfg_files;
+sourceNeo.tag     = 'source';
+sourceNeo.name    = 'Source Image';
+sourceNeo.help    = {'Anatomical image (T2) to perform the isolation algorithm on.  The image will be cropped and a probabistic isolation will be performed. '};
+sourceNeo.filter = 'image';
+sourceNeo.ufilter = '.*';
+sourceNeo.num     = [1 1];
+
+% ---------------------------------------------------------------------
+% subj Subject
+% ---------------------------------------------------------------------
+subjNeo         = cfg_branch;
+subjNeo.tag     = 'subj';
+subjNeo.name    = 'Subject';
+subjNeo.val     = {sourceNeo};
+subjNeo.help    = {'Data for this subject.  The same parameters are used within subject.'};
+% % ---------------------------------------------------------------------
+% % esubjs Data
+% % ---------------------------------------------------------------------
+esubjsNeo         = cfg_repeat;
+esubjsNeo.tag     = 'esubjs';
+esubjsNeo.name    = 'Data';
+esubjsNeo.help    = {'List of source images to be isolated.'};
+esubjsNeo.values  = {sourceNeo};
+esubjsNeo.num     = [1 Inf];
+% ---------------------------------------------------------------------
+% maskp 
+% ---------------------------------------------------------------------
+mask_probNeo         = cfg_entry;
+mask_probNeo.tag     = 'maskp';
+mask_probNeo.name    = 'Mask probability';
+mask_probNeo.help    = {'Higher values will result in a larger cerebellar mask.'};
+mask_probNeo.strtype = 'e';
+mask_probNeo.num     = [1 1];
+mask_probNeo.def     = @(val)suit_get_defaults('isolateNeo.maskp', val{:});
+% ---------------------------------------------------------------------
+% keeptfiles 
+% ---------------------------------------------------------------------
+keepfNeo         = cfg_entry;
+keepfNeo.tag     = 'keeptfiles';
+keepfNeo.name    = 'Keep temporal files';
+keepfNeo.help    = {'Keep intermidiate results including segmentations.'};
+keepfNeo.strtype = 'e';
+keepfNeo.num     = [1 1];
+keepfNeo.def     = @(val)suit_get_defaults('isolateNeo.keeptfiles', val{:});
+% ---------------------------------------------------------------------
+% getV calculate volume
+% ---------------------------------------------------------------------
+getvNeo         = cfg_entry;
+getvNeo.tag     = 'getV';
+getvNeo.name    = 'Calculate volume';
+getvNeo.help    = {'This option calculate the volume of the cerebelar mask. if the mask need manual correction volume should be calculated again.'};
+getvNeo.strtype = 'e';
+getvNeo.num     = [1 1];
+getvNeo.def     = @(val)suit_get_defaults('isolateNeo.getV', val{:});
+
+% ---------------------------------------------------------------------
+% Isolate unit
+% ---------------------------------------------------------------------
+isolateNeo         = cfg_exbranch;
+isolateNeo.tag     = 'isolateNeo';
+isolateNeo.name    = 'Neonatal Isolation';
+isolateNeo.val     = {esubjsNeo mask_probNeo keepfNeo getvNeo};
+isolateNeo.help    = {'Isolation of the neonatal cerebellum from the surrounding tissue'}';
+isolateNeo.prog = @suit_run_isolate_neo;
+
+% ---------------------------------------------------------------------
+%
+% NORMALIZATION Neonate
+% 
+% source Source Image
+% ---------------------------------------------------------------------
+sourceNneo         = cfg_files;
+sourceNneo.tag     = 'source';
+sourceNneo.name    = 'Source Image';
+sourceNneo.help    = {'The cropped image (c_*) that should be warped to match the template(s).',...
+    'The result is a set of warps, which can be applied to this image, or any other image that is in register with it.',''};
+sourceNneo.filter = 'image';
+sourceNneo.ufilter = '.*';
+sourceNneo.num     = [1 1];
+% ---------------------------------------------------------------------
+% Mask 
+% ---------------------------------------------------------------------
+maskNneo         = cfg_files;
+maskNneo.tag     = 'mask';
+maskNneo.name    = 'Cerebellar Mask';
+maskNneo.help    = {'The isolation mask derived from the suit_isolate algorithm that removes all non-cerebellar structures.',...
+    'The _pcereb_corr.nii should be viewed and possibly handcorrected before normalization.',''};
+maskNneo.filter = 'image';
+maskNneo.ufilter = '.*';
+maskNneo.num     = [1 1];
+% ---------------------------------------------------------------------
+% lesion mask 
+% ---------------------------------------------------------------------
+lesionMaskNneo         = cfg_files;
+lesionMaskNneo.tag     = 'lesion_mask';
+lesionMaskNneo.name    = 'Lesion Mask';
+lesionMaskNneo.val     = {''};
+lesionMaskNneo.help    = {'Optional lesion mask for the cerebellum. If specified, the lesion will be extended by a rim of 3 mm from the normalization process.',''};
+lesionMaskNneo.filter = 'image';
+lesionMaskNneo.ufilter = '.*';
+lesionMaskNneo.num     = [0 1];
+% ---------------------------------------------------------------------
+% subj Subject
+% ---------------------------------------------------------------------
+subjNneo         = cfg_branch;
+subjNneo.tag     = 'subjN';
+subjNneo.name    = 'Subject';
+subjNneo.val     = {sourceNneo maskNneo lesionMaskNneo};
+subjNneo.help    = {'Data for this subject.  The same parameters are used for all subjects.'};
+% ---------------------------------------------------------------------
+% esubjs Data
+% ---------------------------------------------------------------------
+subjsNneo         = cfg_repeat;
+subjsNneo.tag     = 'subjsN';
+subjsNneo.name    = 'Data';
+subjsNneo.help    = {'List of subjects for the normalization step. Images of each subject should be warped differently.',''};
+subjsNneo.values  = {subjNneo};
+subjsNneo.num     = [1 Inf];
+% ---------------------------------------------------------------------
+% template Template Image
+% ---------------------------------------------------------------------
+templateneo         = cfg_files;
+templateneo.tag     = 'template';
+templateneo.name    = 'Template Image';
+templateneo.help    = {'Specify a template image to match the source image with (default is SUIT.img).'};
+templateneo.filter = 'image';
+templateneo.ufilter = '.*';
+templateneo.num     = [1 1]; 
+templateneo.def     = @(val)suit_get_defaults('normaliseN.template', val{:});
+% ---------------------------------------------------------------------
+% weight Template Weighting Image
+% ---------------------------------------------------------------------
+weightneo         = cfg_files;
+weightneo.tag     = 'template_weight';
+weightneo.name    = 'Template Weighting Image';
+weightneo.help    = {
+                  'Applies a weighting mask to the template(s) during the parameter estimation.',''};
+weightneo.filter = 'image';
+weightneo.ufilter = '.*';
+weightneo.num     = [1 1];
+weightneo.def     = @(val)suit_get_defaults('normaliseN.template_weight', val{:});
+% ---------------------------------------------------------------------
+% smosrc Source Image Smoothing
+% ---------------------------------------------------------------------
+prefixNneo         = cfg_entry;
+prefixNneo.tag     = 'prefix';
+prefixNneo.name    = 'Prefix anatomical';
+prefixNneo.help    = {'Prefix with which the resliced anantomical image will be saved.',''};
+prefixNneo.strtype = 's';
+prefixNneo.num     = [1 Inf];
+prefixNneo.def     = @(val)suit_get_defaults('normaliseN.prefix', val{:});
+% ---------------------------------------------------------------------
+% smosrc Source Image Smoothing
+% ---------------------------------------------------------------------
+parampostfixneo         = cfg_entry;
+parampostfixneo.tag     = 'param_postfix';
+parampostfixneo.name    = 'parameter postfix';
+parampostfixneo.help    = {'Post fix for the deformation parameter file (default: _snc)',''};
+parampostfixneo.strtype = 's';
+parampostfixneo.num     = [1 Inf];
+parampostfixneo.def     = @(val)suit_get_defaults('normaliseN.param_postfix', val{:});
+
+% ---------------------------------------------------------------------
+% smosrc Source Image Smoothing
+% ---------------------------------------------------------------------
+smooth_maskneo         = cfg_entry;
+smooth_maskneo.tag     = 'smooth_mask';
+smooth_maskneo.name    = 'Mask Image Smoothing';
+smooth_maskneo.help    = {'Smoothing to apply to the mask image, before multiplying with the target image.',''};
+smooth_maskneo.strtype = 'e';
+smooth_maskneo.num     = [1 1];
+smooth_maskneo.def     = @(val)suit_get_defaults('normaliseN.smooth_mask', val{:});
+% ---------------------------------------------------------------------
+% smosrc Source Image Smoothing
+% ---------------------------------------------------------------------
+smosrcneo         = cfg_entry;
+smosrcneo.tag     = 'smosrc';
+smosrcneo.name    = 'Source Image Smoothing';
+smosrcneo.help    = {'Smoothing to apply to a copy of the source image.',...
+    'The template and source images should have approximately the same smoothness.',...
+     'By experience a value of 2mm gives good result while preserving anatomical detail.',''}; 
+smosrcneo.strtype = 'e';
+smosrcneo.num     = [1 1];
+smosrcneo.def     = @(val)suit_get_defaults('normaliseN.estimate.smosrc', val{:});
+% ---------------------------------------------------------------------
+% smoref Template Image Smoothing
+% ---------------------------------------------------------------------
+smorefneo         = cfg_entry;
+smorefneo.tag     = 'smoref';
+smorefneo.name    = 'Template Image Smoothing';
+smorefneo.help    = {'Smoothing to apply to a copy of the template image.','',...
+    'The template and source images should have approximately the same smoothness.',...
+    'On the standard SUIT image, no smoothing of the template is necessary',''};
+smorefneo.strtype = 'e';
+smorefneo.num     = [1 1];
+smorefneo.def     = @(val)suit_get_defaults('normaliseN.estimate.smoref', val{:});
+% ---------------------------------------------------------------------
+% regtype Affine Regularisation
+% ---------------------------------------------------------------------
+regtypeneo         = cfg_menu;
+regtypeneo.tag     = 'regtype';
+regtypeneo.name    = 'Affine Regularisation';
+regtypeneo.help    = {'Affine registration into a standard space can be made more robust by regularisation (penalising excessive stretching or shrinking).  The best solutions can be obtained by knowing the approximate amount of stretching that is needed (e.g. ICBM templates are slightly bigger than typical brains, so greater zooms are likely to be needed). If registering to an image in ICBM/MNI space, then choose the first option.  If registering to a template that is close in size, then select the second option.  If you do not want to regularise, then choose the third.',''};
+regtypeneo.labels = {
+                  'ICBM space template'
+                  'Average sized template'
+                  'No regularisation'
+}';
+regtypeneo.values = {
+                  'mni'
+                  'subj'
+                  'none'
+}';
+regtypeneo.def     = @(val)suit_get_defaults('normaliseN.estimate.regtype', val{:});
+% ---------------------------------------------------------------------
+% cutoff Nonlinear Frequency Cutoff
+% ---------------------------------------------------------------------
+cutoffneo         = cfg_entry;
+cutoffneo.tag     = 'cutoff';
+cutoffneo.name    = 'Nonlinear Frequency Cutoff';
+cutoffneo.help    = {'Cutoff of DCT bases.  Only DCT bases of periods longer than the cutoff are used to describe the warps.',...
+                'SUIT normalization uses higher frequencies (1cm) than normal MNI normalization',''};
+cutoffneo.strtype = 'e';
+cutoffneo.num     = [1 1];
+cutoffneo.def     = @(val)suit_get_defaults('normaliseN.estimate.cutoff', val{:});
+% ---------------------------------------------------------------------
+% nits Nonlinear Iterations
+% ---------------------------------------------------------------------
+nitsneo         = cfg_entry;
+nitsneo.tag     = 'nits';
+nitsneo.name    = 'Nonlinear Iterations';
+nitsneo.help    = {'Number of iterations of nonlinear warping performed. 30 is a good compromise between convergence and speed.',''};
+nitsneo.strtype = 'w';
+nitsneo.num     = [1 1];
+nitsneo.def     = @(val)suit_get_defaults('normaliseN.estimate.nits', val{:});
+% ---------------------------------------------------------------------
+% reg Nonlinear Regularisation
+% ---------------------------------------------------------------------
+regneo         = cfg_entry;
+regneo.tag     = 'reg';
+regneo.name    = 'Nonlinear Regularisation';
+regneo.help    = {'The amount of regularisation for the nonlinear part of the spatial normalisation. Pick a value around one.',...
+    'However, if your normalised images appear distorted, then it may be an idea to increase the amount of regularisation.',...
+    '(by an order of magnitude). This may be especially useful if you have a lesioned cerebellum.',''};
+regneo.strtype = 'e';
+regneo.num     = [1 1];
+regneo.def     = @(val)suit_get_defaults('normaliseN.estimate.reg', val{:});
+% ---------------------------------------------------------------------
+% eoptions Estimation Options
+% ---------------------------------------------------------------------
+eoptionsneo         = cfg_branch;
+eoptionsneo.tag     = 'estimate';
+eoptionsneo.name    = 'Estimation Options';
+eoptionsneo.val     = {smosrcneo smorefneo regtypeneo cutoffneo nitsneo regneo };
+eoptionsneo.help    = {'Various settings for estimating warps.'};
+eoptionsneo.expanded = false; 
+
+% ---------------------------------------------------------------------
+% preserve Preserve
+% ---------------------------------------------------------------------
+preserveNneo         = cfg_menu;
+preserveNneo.tag     = 'preserveN';
+preserveNneo.name    = 'Preserve';
+preserveNneo.help    = {'Preserve Concentrations: Spatially normalised images are not "modulated". The warped images preserve the intensities of the original images.',...
+                    'Preserve Total: Spatially normalised images are "modulated" in order to preserve the total amount of signal in the images. Areas that are expanded during warping are correspondingly reduced in intensity. Use this option for VBM analysis.',''};
+preserveNneo.labels = {
+                   'Preserve Concentrations'
+                   'Preserve Amount'
+}';
+preserveNneo.values = {0 1};
+preserveNneo.def     = @(val)suit_get_defaults('normaliseN.write.preserve', val{:});
+% ---------------------------------------------------------------------
+% bb Bounding box
+% ---------------------------------------------------------------------
+bbNneo         = cfg_entry;
+bbNneo.tag     = 'bb';
+bbNneo.name    = 'Bounding box';
+bbNneo.help    = {'The bounding box (in mm) of the volume which is to be written (relative to the anterior commissure).',...
+    'The default bounding box gives you images of the size of the suit template',''};
+bbNneo.strtype = 'e';
+bbNneo.num     = [2 3];
+bbNneo.def     = @(val)suit_get_defaults('normaliseN.write.bb', val{:});
+% ---------------------------------------------------------------------
+% vox Voxel sizes
+% ---------------------------------------------------------------------
+voxNneo         = cfg_entry;
+voxNneo.tag     = 'voxN';
+voxNneo.name    = 'Voxel sizes';
+voxNneo.help    = {'The voxel sizes (x, y & z, in mm) of the written normalised images.',...
+    'Usually we use 2mm for functional data and 1mm for anatomical data.',''};
+voxNneo.strtype = 'e';
+voxNneo.num     = [1 3];
+voxNneo.def     = @(val)suit_get_defaults('normaliseN.write.vox', val{:});
+% ---------------------------------------------------------------------
+% interp Interpolation
+% ---------------------------------------------------------------------
+interpNneo         = cfg_menu;
+interpNneo.tag     = 'interpN';
+interpNneo.name    = 'Interpolation';
+interpNneo.help    = {
+                  'The method by which the images are sampled when being written in a different space.'
+                  '    Nearest Neighbour:     - Fastest, but not normally recommended.'
+                  '    Bilinear Interpolation:     - OK for PET, or realigned fMRI.'
+                  '    B-spline Interpolation:     - Better quality (but slower) interpolation/* \cite{thevenaz00a}*/, especially       with higher degree splines.  Do not use B-splines when       there is any region of NaN or Inf in the images. '
+}';
+interpNneo.labels = {
+                 'Nearest neighbour'
+                 'Trilinear'
+                 '2nd Degree B-spline'
+                 '3rd Degree B-Spline '
+                 '4th Degree B-Spline '
+                 '5th Degree B-Spline'
+                 '6th Degree B-Spline'
+                 '7th Degree B-Spline'
+}';
+interpNneo.values = {0 1 2 3 4 5 6 7};
+interpNneo.def     = @(val)suit_get_defaults('normaliseN.write.interp', val{:});
+% ---------------------------------------------------------------------
+% wrap Wrapping
+% ---------------------------------------------------------------------
+wrapNneo         = cfg_menu;
+wrapNneo.tag     = 'wrapN';
+wrapNneo.name    = 'Wrapping';
+wrapNneo.help    = {
+                'These are typically:'
+                '    No wrapping: for PET or images that have already                   been spatially transformed. '
+                '    Wrap in  Y: for (un-resliced) MRI where phase encoding                   is in the Y direction (voxel space).'
+}';
+wrapNneo.labels = {
+               'No wrap'
+               'Wrap X'
+               'Wrap Y'
+               'Wrap X & Y'
+               'Wrap Z'
+               'Wrap X & Z'
+               'Wrap Y & Z'
+               'Wrap X, Y & Z'
+}';
+wrapNneo.values = {[0 0 0] [1 0 0] [0 1 0] [1 1 0] [0 0 1] [1 0 1] [0 1 1]...
+               [1 1 1]};
+wrapNneo.def     = @(val)suit_get_defaults('normaliseN.write.wrap', val{:});
+
+% ---------------------------------------------------------------------
+% roptions Writing Options
+% ---------------------------------------------------------------------
+roptionsNneo         = cfg_branch;
+roptionsNneo.tag     = 'write';
+roptionsNneo.name    = 'Writing Options';
+roptionsNneo.val     = {preserveNneo bbNneo voxNneo interpNneo wrapNneo };
+roptionsNneo.help    = {'Various options for writing the normalised anatomical image.'};
+roptionsNneo.expanded = false; 
+% ---------------------------------------------------------------------
+% est Normalise: Estimate
+% ---------------------------------------------------------------------
+normaliseNeo         = cfg_exbranch;
+normaliseNeo.tag     = 'normaliseNeo';
+normaliseNeo.name    = 'Normalise into SUIT-N space';
+normaliseNeo.val     = {subjsNneo prefixNneo templateneo weightneo parampostfixneo smooth_maskneo eoptionsneo roptionsNneo };
+normaliseNeo.help    = {'Computes the warp that best registers a source image (or series of source images) to match a template, saving it to a file imagename''_sn.mat''.'};
+normaliseNeo.prog = @suit_run_normalise;
+normaliseNeo.vout = @vout_normalise;
+
+
+
+
+
+
+% ---------------------------------------------------------------------
+% 
+% RESLICE NEO
+% 
+% matname Parameter File
+% ---------------------------------------------------------------------
+paramfileneo         = cfg_files;
+paramfileneo.tag     = 'paramfile';
+paramfileneo.name    = 'Parameter File';
+paramfileneo.help    = {'Select the ''_snc.mat'' file containing the spatial normalisation parameters for that subject.' ''};
+paramfileneo.filter = 'mat';
+paramfileneo.ufilter = '.mat$';
+paramfileneo.num     = [1 1];
+% ---------------------------------------------------------------------
+% resample Images to Write
+% ---------------------------------------------------------------------
+resampleneo         = cfg_files;
+resampleneo.tag     = 'resample';
+resampleneo.name    = 'Images to Write';
+resampleneo.help    = {'These are the images for warping according to the estimated parameters. They can be any images that are in register with the "source" image used to generate the parameters.'};
+resampleneo.filter = 'image';
+resampleneo.ufilter = '.*';
+resampleneo.num     = [1 Inf];
+% ---------------------------------------------------------------------
+% Mask 
+% ---------------------------------------------------------------------
+maskRneo         = cfg_files;
+maskRneo.tag     = 'mask';
+maskRneo.name    = 'Cerebellar Mask';
+maskRneo.val     = {''};
+maskRneo.help    = {'Optional mask image that will be applied to the original images before reslicing.' 
+                 'Typically this is the _pcereb_corr.nii from the isolation to remove all non-cerebellar structures.'
+                 ''};
+maskRneo.filter = 'image';
+maskRneo.ufilter = '.*';
+maskRneo.num     = [0 1];
+% ---------------------------------------------------------------------
+% subj Subject
+% ---------------------------------------------------------------------
+subjneo         = cfg_branch;
+subjneo.tag     = 'subj';
+subjneo.name    = 'Subject';
+subjneo.val     = {paramfileneo resampleneo maskRneo};
+subjneo.help    = {'Data for this subject.  The same parameters are used within subject.'};
+% ---------------------------------------------------------------------
+% wsubjs Data
+% ---------------------------------------------------------------------
+wsubjsneo         = cfg_repeat;
+wsubjsneo.tag     = 'wsubjs';
+wsubjsneo.name    = 'Data';
+wsubjsneo.help    = {'List of subjects. Images of each subject should be warped differently.'};
+wsubjsneo.values  = {subjneo};
+wsubjsneo.num     = [1 Inf];
+% ---------------------------------------------------------------------
+% preserve Preserve
+% ---------------------------------------------------------------------
+preserveneo         = cfg_menu;
+preserveneo.tag     = 'preserve';
+preserveneo.name    = 'Preserve';
+preserveneo.help    = {'Preserve Concentrations: Spatially normalised images are not "modulated". The warped images preserve the intensities of the original images.',...
+                    'Preserve Total: Spatially normalised images are "modulated" in order to preserve the total amount of signal in the images. Areas that are expanded during warping are correspondingly reduced in intensity. Use this option for VBM analysis.',''};
+
+preserveneo.labels = {
+                   'Preserve Concentrations'
+                   'Preserve Amount'
+}';
+preserveneo.values = {0 1};
+preserveneo.def     = @(val)suit_get_defaults('resliceN.preserve', val{:});
+% ---------------------------------------------------------------------
+% bb Bounding box
+% ---------------------------------------------------------------------
+bbRneo          = cfg_entry;
+bbRneo.tag     = 'bb';
+bbRneo.name    = 'Bounding box';
+bbRneo.help    = {'The bounding box (in mm) of the volume which is to be written (relative to the anterior commissure).',...
+    'The default bounding box gives you images of the size of the suit template',''};
+bbRneo.strtype = 'e';
+bbRneo.num     = [2 3];
+bbRneo.def     = @(val)suit_get_defaults('resliceN.bb', val{:});
+% ---------------------------------------------------------------------
+% vox Voxel sizes
+% ---------------------------------------------------------------------
+voxRneo         = cfg_entry;
+voxRneo.tag     = 'vox';
+voxRneo.name    = 'Voxel sizes';
+voxRneo.help    = {'The voxel sizes (x, y & z, in mm) of the written normalised images.',...
+    'Usually we use 2mm for functional data and 1mm for anatomical data.',''};
+voxRneo.strtype = 'e';
+voxRneo.num     = [1 3];
+voxRneo.def     = @(val)suit_get_defaults('resliceN.vox', val{:});
+% ---------------------------------------------------------------------
+% interp Interpolation
+% ---------------------------------------------------------------------
+interpRneo         = cfg_menu;
+interpRneo.tag     = 'interp';
+interpRneo.name    = 'Interpolation';
+interpRneo.help    = {
+                  'The method by which the images are sampled when being written in a different space.'
+                  '    Nearest Neighbour:     - Recommended for reslicing Atlas label images or ROIs.'
+                  '    Bilinear Interpolation:     - OK for PET, or realigned fMRI.'
+                  '    B-spline Interpolation:     - Better quality (but slower) interpolation/* \cite{thevenaz00a}*/, especially       with higher degree splines.  Do not use B-splines when       there is any region of NaN or Inf in the images. '
+}';
+interpRneo.labels = {
+                 'Nearest neighbour'
+                 'Trilinear'
+                 '2nd Degree B-spline'
+                 '3rd Degree B-Spline '
+                 '4th Degree B-Spline '
+                 '5th Degree B-Spline'
+                 '6th Degree B-Spline'
+                 '7th Degree B-Spline'
+}';
+interpRneo.values = {0 1 2 3 4 5 6 7};
+interpRneo.def     = @(val)suit_get_defaults('resliceN.interp', val{:});
+% ---------------------------------------------------------------------
+% prefix Filename Prefix
+% ---------------------------------------------------------------------
+prefixRneo         = cfg_entry;
+prefixRneo.tag     = 'prefix';
+prefixRneo.name    = 'Filename Prefix';
+prefixRneo.help    = {'Specify the string to be prepended to the filenames of the normalised image file(s). Default prefix is ''wc''.',''};
+prefixRneo.strtype = 's';
+prefixRneo.num     = [1 Inf];
+prefixRneo.def     = @(val)suit_get_defaults('resliceN.prefix', val{:});
+% ---------------------------------------------------------------------
+% smosrc Source Image Smoothing
+% ---------------------------------------------------------------------
+smooth_maskneo         = cfg_entry;
+smooth_maskneo.tag     = 'smooth_mask';
+smooth_maskneo.name    = 'Mask Image Smoothing';
+smooth_maskneo.help    = {'Smoothing to apply to the mask image, before multiplying with the image to reslice',''};
+smooth_maskneo.strtype = 'e';
+smooth_maskneo.num     = [1 1];
+smooth_maskneo.def     = @(val)suit_get_defaults('resliceN.smooth_mask', val{:});
+% ---------------------------------------------------------------------
+% REslice neo
+% ---------------------------------------------------------------------
+resliceNeo         = cfg_exbranch;
+resliceNeo.tag     = 'resliceNeo';
+resliceNeo.name    = 'Reslice into SUIT-N space';
+resliceNeo.val     = {wsubjsneo smooth_maskneo preserveneo bbRneo voxRneo interpRneo prefixRneo};
+resliceNeo.help    = {'Allows previously estimated warps (stored in imagename''_snc.mat'' files) to be applied to series of images.'};
+resliceNeo.prog = @suit_run_reslice;
+
+
+
+
+
+
+% ---------------------------------------------------------------------
 % 
 % Overall menu and toolbox 
 % 
@@ -1107,7 +1628,7 @@ suit.help    = {
     'Diedrichsen, J. & Zotow, E. (2015). Surface-based display of volume-averaged cerebellar imaging data.'
     ''
     }';
-suit.values  = {isolate_seg normalise_dartel normalise_dentate reslice_dartel summarize flatmap isolate normalise reslice reslice_inv };
+suit.values  = {isolate_seg normalise_dartel normalise_dentate reslice_dartel summarize flatmap isolate normalise reslice reslice_inv isolateNeo normaliseNeo resliceNeo};
 
 
 %------------------------------------------------------------------------

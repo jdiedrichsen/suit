@@ -40,12 +40,16 @@ if (~isstruct(defaults))
     error('Start SPM to use SUIT_isolate');
 end;
 
-getV = 0;
-maskp = 0.5;
-keeptfiles = 0;
-bb = [-39 40;-65 -6;-41 -2];
-spm_Dir = fileparts(which('spm'));
-priors = [spm_Dir '/toolbox/suit/neo/neoTPM.nii'];
+global defaults_suit; 
+if (~isstruct(defaults_suit))
+    suit_defaults;
+end;
+
+names=fieldnames(defaults_suit.isolateNeo); 
+for i=1:length(names)
+    eval([names{i} '= defaults_suit.isolateNeo.' names{i} ';']); 
+end;
+
 
 % -----------------------------------------------------------------
 % Check spm-version
@@ -63,7 +67,7 @@ if (iscell(source)); source=char(source); end;
 for i = 1:size(source,1)
         image = source(i,:);
 
-    [source_dir,Sname,ext]=fileparts(image);
+    [source_dir,Sname,ext,num]=spm_fileparts(image);
 
     if (isempty(source_dir))
         source_dir=pwd;

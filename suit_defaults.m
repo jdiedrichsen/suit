@@ -45,6 +45,13 @@ defaults_suit.isolate.iterations=2;           % Number of iterations
 defaults_suit.isolate.crop='crop';         % 'none': No cropping of image
 defaults_suit.isolate.keeptempfiles=0;        % Keep temporary files (0/1)
 
+% isolateNeo
+defaults_suit.isolateNeo.getV=0;
+defaults_suit.isolateNeo.keeptfiles=0;
+defaults_suit.isolateNeo.maskp=0.5;
+defaults_suit.isolateNeo.bb = [-39 40;-65 -6;-41 -2];
+defaults_suit.isolateNeo.priors=[spm_Dir '/toolbox/suit/neo/neoTPM.nii'];
+
 % isolate_seg
 defaults_suit.isolate_seg.keeptempfiles=0;
 defaults_suit.isolate_seg.maskp=0.2;
@@ -110,3 +117,35 @@ defaults_suit.reslice_inv.interp = 0;
 % Lobuli Summarize function
 defaults_suit.summarize.atlas={[spm_Dir '/toolbox/suit/atlas/Cerebellum-SUIT.nii']};
 defaults_suit.summarize.stats={'nanmean'};
+
+% normalize neonate
+defaults_suit.normaliseN.template={[spm_Dir '/toolbox/suit/neo/SUIT-N.nii']};
+defaults_suit.normaliseN.template_weight={[spm_Dir '/toolbox/suit/neo/SUIT-N_w.nii']};
+defaults_suit.normaliseN.source_weight=[];
+defaults_suit.normaliseN.lesion_mask=[];
+defaults_suit.normaliseN.lesion_rim=2;
+defaults_suit.normaliseN.prefix='wsn_';
+defaults_suit.normaliseN.param='';
+defaults_suit.normaliseN.outfilename='';
+defaults_suit.normaliseN.param_postfix='_snc';
+defaults_suit.normaliseN.smooth_mask=2;
+defaults_suit.normaliseN.estimate.smosrc=2;
+defaults_suit.normaliseN.estimate.smoref=0;
+defaults_suit.normaliseN.estimate.regtype='subj';
+defaults_suit.normaliseN.estimate.cutoff=10;
+defaults_suit.normaliseN.estimate.nits=30;
+defaults_suit.normaliseN.estimate.reg=1;
+defaults_suit.normaliseN.estimate.wtsrc = 0;
+defaults_suit.normaliseN.write.preserve=0;
+defaults_suit.normaliseN.write.interp=1;
+defaults_suit.normaliseN.write.vox=[1 1 1];
+defaults_suit.normaliseN.write.bb=[-39 -65 -41; 40 -6 -2];
+defaults_suit.normaliseN.write.wrap = [0 0 0];
+
+% Reslicing neonate 
+defaults_suit.resliceN.prefix='wn';
+defaults_suit.resliceN.interp = 1;
+defaults_suit.resliceN.preserve=1;
+defaults_suit.resliceN.vox=[1 1 1];
+defaults_suit.resliceN.bb=[-39 -65 -41;40 -6 -2];
+defaults_suit.resliceN.smooth_mask=2;
