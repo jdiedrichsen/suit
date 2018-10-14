@@ -114,6 +114,11 @@ for s=1:length(job.subj)
         for z=1:num_slice
             Data(:,:,z)=spm_sample_vol(V(i),Xm(:,:,z),Ym(:,:,z),Zm(:,:,z),job.interp);
         end;
+        
+        if job.jactransf % Apply modulation in the Affine transform if selected
+            Data=Data.*det(inv(Affine));
+        end
+        
         Data=Data.*MaskData; % Mask the image
         O(i)=V(i); 
         O(i).dim=Vff.dim; 

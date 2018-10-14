@@ -37,7 +37,8 @@ function D=suit_lobuli_summarize(images,varargin);
 % v.2.5: made compatible with SPM8-jobmanager (26/08/2010) 
 
 global defaults;
-atlas=[];
+spm_dir = fileparts(which('spm'));
+atlas=[spm_dir '/toolbox/suit/atlas/Cerebellum-SUIT.nii'];
 stats={'nanmean','max'};
 namereg={'Left I_IV','Right I_IV','Left V','Right V',...
     'Left VI','Vermis VI','Right VI',...
@@ -63,23 +64,6 @@ vararginoptions(varargin,{'outfilename','atlas','stats'});
 if (nargin<1 || isempty(images))
     images=spm_select(inf,'image','Select images to do statistics on');
 end;
-if (isempty(atlas))
-    try
-        switch(spm('Ver'))
-            case {'SPM5','SPM8'}
-                suit_dir=fileparts(which('suit_normalize_dartel.m')); 
-                atlas=fullfile(suit_dir,'atlas','Cerebellum-SUIT.nii');
-            case {'SPM12b'}
-                atlas=fullfile(defaults.tbx.dir{1},'suit','atlas','Cerebellum-SUIT.nii');
-            otherwise
-                error(sprintf('Unknown SPM-version: %s',spmVer)); 
-        end;
-    catch
-        error('Could not find atlas. Specify atlas or start SPM');
-    end;
-end;
-
-
 
 if (~isstruct(atlas))
     Vatlas=spm_vol(atlas);

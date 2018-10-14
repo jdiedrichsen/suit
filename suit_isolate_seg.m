@@ -215,7 +215,10 @@ if (strcmp(ext,'.img'))
     if (exist([name '.mat'],'file'))
         delete([name '.mat']);
     end;
-end;
+
+    
+end
+
 end
 
 function VR=save_vol(DATA,name,V)
@@ -228,3 +231,4 @@ VR    = struct(		'fname',name,...
 VR    = spm_create_vol(VR);
 spm_write_vol(VR,DATA);
 end
+    
