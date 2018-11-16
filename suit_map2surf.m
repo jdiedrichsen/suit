@@ -4,11 +4,13 @@ function Data=suit_map2surf(input,varargin)
 % representation 
 % 
 % INPUT: 
-%    Files:     Nx1 Array of filenames that should be mapped 
-%               OR 
-%               Nx3 Matrix of foci with each row representing [x,y,z] of
-%               foci in atlas space
-% OUTPUT:       xxx x N Matrix of vertex values, if input were files 
+%    input:     Data to be plotted. This could be: 
+%               - NxP Character array of file names 
+%               - Nx1 Cell array of filenames that should be mapped 
+%               - Nx1 Array of volume structures (possibly with V.dat field)
+%               - Nx3 Matrix of foci with each row representing [x,y,z] of
+%                   foci in atlas space
+% OUTPUT:       Vertex x N Matrix of vertex values, if input were files 
 %               OR 
 %               N x 2 Matrix of coordinates, if input were foci
 % VARARGIN: 
@@ -25,7 +27,7 @@ function Data=suit_map2surf(input,varargin)
 %               'mode'        Should be used discrete labels are sampled and the most frequent label is assigned 
 %               'minORmax'    Maps the minumum or maximum values, glass brain projection for statistical maps
 %       
-% (c) j.diedrichsen@ucl.ac.uk, 2015
+% (c) joern.diedrichsen@googlemail.com, 2015,2018
 % -----------------------------------------------------------------
 
 % -----------------------------------------------------------------
@@ -89,9 +91,8 @@ c1=C1.vertices;
 c2=C2.vertices; 
 
 % -----------------------------------------------------------------
-%   If input are image files: Map those. 
+%   Deal with different input formats
 % -----------------------------------------------------------------
-if (iscell(input) || ischar(input))
 % If character array, make into cell
 if (ischar(input))
     for i=1:size(input,1);
@@ -100,96 +101,107 @@ if (ischar(input))
 else 
     V=input; 
 end;
-A=[];
-firstgood=[]; 
-for i=1:size(V,2);
-    try
-        A{i}=spm_vol(V{i});
-        if (isempty(firstgood))
-            firstgood=i;
+% If file names: map them into a structure
+if (iscell(V))
+    firstgood=[];
+    for i=1:size(V,2);
+        try
+            A(i)=spm_vol(V{i});
+            if (isempty(firstgood))
+                firstgood=i;
+            end;
+        catch
+             warning(sprintf('%s could not be opened',V{i}));
+             if(~isempty(firstgood))
+                 A(i)=A(firstgood);
+                 A(i).dim=[]; % Mark as empty 
+             end; 
         end;
-    catch
-        warning(sprintf('%s could not be opened',V{i}));
-        A{i}=[]; 
     end;
+    if (isempty(firstgood))
+        error('none of the images could be opened');
+    end;
+    V=A;
+else 
+    firstgood=1; 
 end;
-V=A;
-
-if (isempty(firstgood))
-    error('none of the images could be opened');
-end; 
 
 if (length(ignore_zeros)==1)
     ignore_zeros=ones(length(V),1)*ignore_zeros;
 end;
 
-% -----------------------------------------------------------------
-%   Loop over the nodes depth and get the linear voxel indices 
-% -----------------------------------------------------------------
-% For all sampling depth - get the 
-dim = V{firstgood}.dim;
-mat = V{firstgood}.mat;
-for d=1:numDepths % Number of sample points between white and pial surface
-    c=(1-depths(d))*c1+depths(d)*c2;
-    [i,j,k]=spmj_affine_transform(c(:,1),c(:,2),c(:,3),inv(mat));
-    i=round(i); 
-    j=round(j); 
-    k=round(k); 
-    indices(:,d)=i+j*dim(1)+k*dim(1)*dim(2); 
-    outside = i<1 | i>dim(1) | j<1 | j>dim(2) | k<1 | k>dim(3); 
-    indices(outside,d)=NaN; 
-end;
-i=find(~isnan(indices));
-data=zeros(size(indices))*NaN;
-
-% -----------------------------------------------------------------
-%   get the data and apply the statistics over the applicable voxels 
-% -----------------------------------------------------------------
-for v=1:length(V);
-    if (~isempty(V{v}))
-        X=spm_read_vols(V{v});
-        if (ignore_zeros)
-            X(X==0)=NaN;
+if (isstruct(V))
+    % -----------------------------------------------------------------
+    %   Loop over the nodes depth and get the linear voxel indices
+    % -----------------------------------------------------------------
+    % For all sampling depth - get the
+    dim = V(firstgood).dim;
+    mat = V(firstgood).mat;
+    for d=1:numDepths % Number of sample points between white and pial surface
+        c=(1-depths(d))*c1+depths(d)*c2;
+        [i,j,k]=spmj_affine_transform(c(:,1),c(:,2),c(:,3),inv(mat));
+        i=round(i);
+        j=round(j);
+        k=round(k);
+        indices(:,d)=i+j*dim(1)+k*dim(1)*dim(2);
+        outside = i<1 | i>dim(1) | j<1 | j>dim(2) | k<1 | k>dim(3);
+        indices(outside,d)=NaN;
+    end;
+    i=find(~isnan(indices));
+    data=zeros(size(indices))*NaN;
+    
+    % -----------------------------------------------------------------
+    %   get the data and apply the statistics over the applicable voxels
+    % -----------------------------------------------------------------
+    for v=1:length(V);
+        if (~isempty(V(v).dim))
+            if ~isfield(V(v),'dat'),
+                X=spm_read_vols(V(v));
+            else
+                X=V(v).dat;
+            end;
+            if (ignore_zeros)
+                X(X==0)=NaN;
+            end;
+            data(i)=X(indices(i));
+            Data(:,v)=feval(stats,data')';
+        else
+            Data(:,v)=nan(size(c1,1),1);
         end;
-        data(i)=X(indices(i));
-        Data(:,v)=feval(stats,data')';
-    else 
-        Data(:,v)=nan(size(c1,1),1); 
-    end; 
-end;
-
-% -----------------------------------------------------------------
-%   Map foci onto the flatmap 
-% -----------------------------------------------------------------
-else
+    end;
+    
+elseif (isnumeric(V))
+    % -----------------------------------------------------------------
+    %   Map foci onto the flatmap
+    % -----------------------------------------------------------------
     FL=gifti(fullfile(flat_dir,flat));
-    [N,S]=size(input); 
-    if ~isnumeric(input) || S~=3 
-        error('input needs to be either files names (cell or strarray) or a N x 3 matrix of foci'); 
-    end; 
-    C=zeros(size(c1,1),3,numDepths); 
+    [N,S]=size(input);
+    if ~isnumeric(input) || S~=3
+        error('input needs to be either files names (cell or strarray) or a N x 3 matrix of foci');
+    end;
+    C=zeros(size(c1,1),3,numDepths);
     for d=1:numDepths       % Number of sample points between white and pial surface
         C(:,:,d)=(1-depths(d))*c1+depths(d)*c2;
-    end; 
-    for n=1:N 
+    end;
+    for n=1:N
         difference = bsxfun(@minus,C,input(n,:));   %
-        sqdistance = squeeze(sum(difference.^2,2)); 
-        [~,indx]  = min(min(sqdistance,[],2));          % Find the closest line between pial and white 
-        Data(n,:) = FL.vertices(indx,:);                         % Take those x,y coordinates 
-        vector    = c2(indx,:) - c1(indx,:);  %Determine projection depth  
-        x         = input(n,:) - c1(indx,:);        
-        Data(n,3) = vector * x' /(vector*vector');      % Normalised projection 
-        if Data(n,3)>1 
+        sqdistance = squeeze(sum(difference.^2,2));
+        [~,indx]  = min(min(sqdistance,[],2));          % Find the closest line between pial and white
+        Data(n,:) = FL.vertices(indx,:);                         % Take those x,y coordinates
+        vector    = c2(indx,:) - c1(indx,:);  %Determine projection depth
+        x         = input(n,:) - c1(indx,:);
+        Data(n,3) = vector * x' /(vector*vector');      % Normalised projection
+        if Data(n,3)>1
             dev=(Data(n,3)-1)*norm(vector);             % In terms of mm
         elseif Data(n,3)<0
             dev=-Data(n,3)*norm(vector);             % In terms of mm
-        else 
-            dev=0; 
-        end; 
-        if (dev>depth_tolerance) 
-            Data(n,:)=NaN; 
-        end; 
-    end; 
+        else
+            dev=0;
+        end;
+        if (dev>depth_tolerance)
+            Data(n,:)=NaN;
+        end;
+    end;
 end;
-    
+
 
