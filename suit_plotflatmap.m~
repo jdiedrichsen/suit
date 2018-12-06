@@ -149,7 +149,7 @@ switch (type)
         dindx(dindx<=0)=1;
         dindx(dindx>colormax)=colormax;
     case 'rgb'
-        keyboard; 
+        
     otherwise
         error('unknown data type');
 end;
