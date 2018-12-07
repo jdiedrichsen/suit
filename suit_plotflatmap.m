@@ -3,22 +3,22 @@ function varargout=suit_plotflatmap(data,varargin)
 % Visualised cerebellar cortical acitivty on a flatmap in a matlab window
 % INPUT:
 %    data                Vector(s) to be plotted. If overlay is NaN,
-%                        underlay is shown. Needs to be a 28935x1 vector 
+%                        underlay is shown. Needs to be a 28935x1 vector
 % VARARGIN:
 %  'underlay',file        Specific a metric or surface_shape file that
 %                         dictates the shape of the grey underlay
-%  'underscale',[min max] Color scale to determine the value to color mapping 
+%  'underscale',[min max] Color scale to determine the value to color mapping
 %                         for the underlay
 %  'undermap',map         Color map for the underlay,a N x 3 Matrix specifying RGB values [0..1]
 %  'type':                Data type to be shown, either
 %                           'func':  Functional data
-%                           'label': discrete labels - integer values 
-%                           'rgb':   A Nx3 matrix of specifying RGB values [0..1] directly 
+%                           'label': discrete labels - integer values
+%                           'rgb':   A Nx3 matrix of specifying RGB values [0..1] directly
 %  'cmap',C             Color map for overlap,a N x 3 Matrix specifying RGB values [0..1]
 %  'cscale',[min max]   Color scale: determines the mapping of values to
 %                        color map
 %  'border',borderfile  Specifies a borderfile to plot. Use [] for no borders
-%  'bordersize',pt      Border point size in pt (default 8) 
+%  'bordersize',pt      Border point size in pt (default 8)
 %  'threshold',val      Shows only values above a certain threshold
 %  'xlims',[xmin xmax]  Limits of the x-coordinate
 %  'ylims',[ymin ymax]  Limits of the y-coordinate
@@ -43,23 +43,25 @@ global defaults;
 if (isempty(defaults))
     spm('Defaults','fmri');
     global defaults;
-end; 
+end;
 flat_dir   = [];                    %
 coord      = 'FLAT.coord.gii';      % Coordinate file for flat map
 topo       = 'CUT.topo.gii';        % Topology file for flat map
 underlay   = 'SUIT.shape.gii';      % File determining colring of underlay
 underscale = [-1 0.5];              % Color scale [min max] for the overlay
 undermap   = gray;                    % Color map for underlay
-type       = 'func';                % 'func': funtional activation 'label': categories 'rgb': RGB values 
+type       = 'func';                % 'func': funtional activation 'label': categories 'rgb': RGB values
 threshold  = [];                    % Threshold for functional overlay
 cscale     = [];                    % Color scale [min max] for the overlay
 cmap       =  colormap;             % Use current colormap by default
 border     = 'fissures_flat.mat';   % File containing fissure information
-bordersize = 8;                     % Size of the border points 
+bordersize = 8;                     % Size of the border points
 xlims      =  [-100 100];           % X-limits for Figure
 ylims      =  [-100 100];           % Y-limits for Figure
+alpha      = 1;                     % Opacacy of the overlay 
 vararginoptions(varargin,{'coord','topo','underlay','underscale','undermap',...
-    'type','threshold','cscale','cmap','border','bordersize','xlims','ylims','flat_dir'});
+    'type','threshold','cscale','cmap','border','bordersize','xlims','ylims',...
+    'flat_dir','alpha'});
 
 SCCSid   = '3.1';
 SPMid    = spm('FnBanner',mfilename,SCCSid);
@@ -107,8 +109,8 @@ dindx(dindx<1)=1;
 dindx(dindx>M)=M;
 
 % Now assign the RGB color to each face
-for i=1:3
-    for j=1:size(dindx,1)
+for i=1:3 % Color channel
+    for j=1:size(dindx,1) % 1-3rd vertex
         COL(j,:,i) = undermap(dindx(j,:),i)';
     end;
 end;
@@ -117,17 +119,17 @@ end;
 %  determine the overlay and assign color
 % -----------------------------------------------------------------
 
-% If input data is empty, make vector of NaNs; 
+% If input data is empty, make vector of NaNs;
 if (isempty(data))
-    data=nan(P,1); 
-end; 
+    data=nan(P,1);
+end;
 
 % Check input data
-if (size(data,1))~=P 
-    error(sprintf('Input data must be a numVert (%d) x 1 vector',P)); 
-end; 
+if (size(data,1))~=P
+    error(sprintf('Input data must be a numVert (%d) x 1 vector',P));
+end;
 
-% Determine colormap 
+% Determine colormap
 if (ischar(cmap))
     CM=load(cmap);
     cmap=[CM(:,2) CM(:,3) CM(:,4)]/255;
@@ -135,10 +137,17 @@ end;
 colormax = size(cmap,1);
 
 % Determine the color of the overlay
+OCOL = nan(size(COL));    % set all values to NaN
 switch (type)
     case 'label'
         % if plotting labels, use the numerical vlaues themselves
         dindx=[data(T.faces(k(:),1),1) data(T.faces(k(:),2),1) data(T.faces(k(:),3),1)]';
+        for i=1:3 % Color channnel
+            for j=1:size(dindx,1) % Over the three vertices
+                indx = find(dindx(j,:)>0 & dindx(j,:)<=colormax);
+                OCOL(j,indx,i) = cmap(dindx(j,indx),i)';
+            end;
+        end;
     case 'func'
         % Otherwise take the mean value
         d=[data(T.faces(k(:),1),1) data(T.faces(k(:),2),1) data(T.faces(k(:),3),1)]';
@@ -148,33 +157,43 @@ switch (type)
         dindx=ceil((d-cscale(1))/(cscale(2)-cscale(1))*colormax);
         dindx(dindx<=0)=1;
         dindx(dindx>colormax)=colormax;
+        for i=1:3 % Color channnel
+            for j=1:size(dindx,1)
+                % Apply map thresholding
+                if (isempty(threshold) || isnan(threshold))
+                    indx = find(dindx(j,:)>0 & dindx(j,:)<=colormax);
+                else
+                    indx = find(d(j,:)>threshold);
+                end;
+                OCOL(j,indx,i) = cmap(dindx(j,indx),i)';
+            end;
+        end;
     case 'rgb'
-        keyboard; 
+        for i=1:3  % over color channels 
+            OCOL(:,:,i)=[data(T.faces(k(:),1),i) data(T.faces(k(:),2),i) data(T.faces(k(:),3),i)]';
+        end; 
     otherwise
         error('unknown data type');
 end;
 
-
-% Assign the color for each tile from the color map
-for i=1:3
-    for j=1:size(dindx,1)
-        % Apply map thresholding
-        if (isempty(threshold) || isnan(threshold))
-            indx = find(dindx(j,:)>0 & dindx(j,:)<=colormax);
-        else
-            indx = find(d(j,:)>threshold);
-        end;
-        COL(j,indx,i) = cmap(dindx(j,indx),i)';
-    end;
-end;
+% Now blend the overlay with the underlay: 
+indx = ~isnan(OCOL); 
+if (isscalar(alpha))
+    COL(indx) = alpha.*OCOL(indx)+(1-alpha)*COL(indx); % Set opacacy of overlay 
+else 
+    for i=1:3 
+        ALPHA(:,:,i) = [alpha(T.faces(k(:),1),1) alpha(T.faces(k(:),2),1) alpha(T.faces(k(:),3),1)]';
+    end; 
+    COL(indx) = ALPHA(indx).*OCOL(indx)+(1-ALPHA(indx)).*COL(indx); 
+end; 
 
 % -----------------------------------------------------------------
 %   Draw the actual patches
 % -----------------------------------------------------------------
-drawmode=get(gca,'NextPlot'); 
+drawmode=get(gca,'NextPlot');
 if (~strcmp(drawmode,'add'))
-    cla; 
-end; 
+    cla;
+end;
 p=patch(X,Y,COL);
 set(gca,'XLim',xlims,'YLim',ylims);
 set(p,'LineStyle','none');
@@ -196,5 +215,5 @@ if (~isempty(border))
     end;
     if (~strcmp(drawmode,'add'))
         hold off;
-    end; 
+    end;
 end;
