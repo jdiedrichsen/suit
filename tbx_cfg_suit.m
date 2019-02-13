@@ -371,7 +371,7 @@ eoptions.expanded = false;
 % preserve Preserve
 % ---------------------------------------------------------------------
 preserveN         = cfg_menu;
-preserveN.tag     = 'preserveN';
+preserveN.tag     = 'preserve';
 preserveN.name    = 'Preserve';
 preserveN.help    = {'Preserve Concentrations: Spatially normalised images are not "modulated". The warped images preserve the intensities of the original images.',...
                     'Preserve Total: Spatially normalised images are "modulated" in order to preserve the total amount of signal in the images. Areas that are expanded during warping are correspondingly reduced in intensity. Use this option for VBM analysis.',''};
@@ -396,7 +396,7 @@ bbN.def     = @(val)suit_get_defaults('normalise.write.bb', val{:});
 % vox Voxel sizes
 % ---------------------------------------------------------------------
 voxN         = cfg_entry;
-voxN.tag     = 'voxN';
+voxN.tag     = 'vox';
 voxN.name    = 'Voxel sizes';
 voxN.help    = {'The voxel sizes (x, y & z, in mm) of the written normalised images.',...
     'Usually we use 2mm for functional data and 1mm for anatomical data.',''};
@@ -407,7 +407,7 @@ voxN.def     = @(val)suit_get_defaults('normalise.write.vox', val{:});
 % interp Interpolation
 % ---------------------------------------------------------------------
 interpN         = cfg_menu;
-interpN.tag     = 'interpN';
+interpN.tag     = 'interp';
 interpN.name    = 'Interpolation';
 interpN.help    = {
                   'The method by which the images are sampled when being written in a different space.'
@@ -431,7 +431,7 @@ interpN.def     = @(val)suit_get_defaults('normalise.write.interp', val{:});
 % wrap Wrapping
 % ---------------------------------------------------------------------
 wrapN         = cfg_menu;
-wrapN.tag     = 'wrapN';
+wrapN.tag     = 'wrap';
 wrapN.name    = 'Wrapping';
 wrapN.help    = {
                 'These are typically:'
