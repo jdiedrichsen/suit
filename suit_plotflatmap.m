@@ -195,7 +195,7 @@ if (~strcmp(drawmode,'add'))
     cla;
 end;
 p=patch(X,Y,COL);
-set(gca,'XLim',xlims,'YLim',ylims);
+set(gca,'XLim',xlims,'YLim',ylims,'XTick',[],'YTick',[]);
 set(p,'LineStyle','none');
 set(p,'EdgeAlpha',0);
 axis equal;
