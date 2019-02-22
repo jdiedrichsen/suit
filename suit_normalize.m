@@ -88,8 +88,8 @@ vararginoptions(varargin,{'mask','smooth_mask','template','template_weight','sou
     'lesion_mask','lesion_rim','reg','prefix','param','outfilename','param_postfix','regularisation','estimate',...
     'write','reg','nits'},{'SUITs'});
 
-estimate.reg=reg;
-estimate.nits=nits;
+%estimate.reg=reg;
+%estimate.nits=nits;
 
 SCCSid   = '3.0';
 SPMid    = spm('FnBanner',mfilename,SCCSid);
