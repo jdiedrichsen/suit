@@ -56,11 +56,12 @@ cscale     = [];                    % Color scale [min max] for the overlay
 cmap       =  colormap;             % Use current colormap by default
 border     = 'fissures_flat.mat';   % File containing fissure information
 bordersize = 8;                     % Size of the border points
+borderstyle = 'k.';                 % Color and symbol for border points 
 xlims      =  [-100 100];           % X-limits for Figure
 ylims      =  [-100 100];           % Y-limits for Figure
 alpha      = 1;                     % Opacacy of the overlay 
 vararginoptions(varargin,{'coord','topo','underlay','underscale','undermap',...
-    'type','threshold','cscale','cmap','border','bordersize','xlims','ylims',...
+    'type','threshold','cscale','cmap','border','bordersize','borderstyle','xlims','ylims',...
     'flat_dir','alpha'});
 
 SCCSid   = '3.1';
@@ -210,7 +211,7 @@ if (~isempty(border))
         xB=Border(i).data(:,1);
         yB=Border(i).data(:,2);
         indx=find(xB>xlims(1) & xB<xlims(2) & yB>ylims(1) & yB<ylims(2));
-        p=plot(xB(indx),yB(indx),'k.');
+        p=plot(xB(indx),yB(indx),borderstyle);
         set(p,'MarkerSize',bordersize);
     end;
     if (~strcmp(drawmode,'add'))
