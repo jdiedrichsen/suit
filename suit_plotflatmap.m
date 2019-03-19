@@ -23,7 +23,7 @@ function varargout=suit_plotflatmap(data,varargin)
 %  'xlims',[xmin xmax]  Limits of the x-coordinate
 %  'ylims',[ymin ymax]  Limits of the y-coordinate
 %
-% (c) j.diedrichsen@ucl.ac.uk, 2014
+% (c) joern.diedrichsen@googlemail.com, 2014, 2019
 % EXAMPLES:
 % 1. Plot a functional volume at a certain treshold + and color scale
 %   Data = suit_map2surf('name.nii','space','SUIT');
@@ -45,8 +45,7 @@ if (isempty(defaults))
     global defaults;
 end;
 flat_dir   = [];                    %
-coord      = 'FLAT.coord.gii';      % Coordinate file for flat map
-topo       = 'CUT.topo.gii';        % Topology file for flat map
+surf       = 'FLAT.surf.gii';       % Surface file for flat map
 underlay   = 'SUIT.shape.gii';      % File determining colring of underlay
 underscale = [-1 0.5];              % Color scale [min max] for the overlay
 undermap   = gray;                    % Color map for underlay
@@ -82,15 +81,14 @@ end;
 % -----------------------------------------------------------------
 %   Load the surface and determine X,Y coordinates for all tiles
 % -----------------------------------------------------------------
-C=gifti(fullfile(flat_dir,coord));
-T=gifti(fullfile(flat_dir,topo));
+C=gifti(fullfile(flat_dir,surf));
 P=size(C.vertices,1);
-X(1,:)=C.vertices(T.faces(:,1),1);
-X(2,:)=C.vertices(T.faces(:,2),1);
-X(3,:)=C.vertices(T.faces(:,3),1);
-Y(1,:)=C.vertices(T.faces(:,1),2);
-Y(2,:)=C.vertices(T.faces(:,2),2);
-Y(3,:)=C.vertices(T.faces(:,3),2);
+X(1,:)=C.vertices(C.faces(:,1),1);
+X(2,:)=C.vertices(C.faces(:,2),1);
+X(3,:)=C.vertices(C.faces(:,3),1);
+Y(1,:)=C.vertices(C.faces(:,1),2);
+Y(2,:)=C.vertices(C.faces(:,2),2);
+Y(3,:)=C.vertices(C.faces(:,3),2);
 
 % Find all tiles that have a single vertex (or more) in the image
 k=find(any(X>xlims(1) & X<xlims(2),1) & any(Y>ylims(1) & Y<ylims(2),1));
@@ -103,7 +101,7 @@ Y=Y(:,k);
 UN=gifti(fullfile(flat_dir,underlay));
 
 % Determine the shading of the faces by the vertices and scale the color assignment
-d=[UN.cdata(T.faces(k(:),1),1) UN.cdata(T.faces(k(:),2),1) UN.cdata(T.faces(k(:),3),1)]';
+d=[UN.cdata(C.faces(k(:),1),1) UN.cdata(C.faces(k(:),2),1) UN.cdata(C.faces(k(:),3),1)]';
 M=size(undermap,1);
 dindx=ceil((d-underscale(1))/(underscale(2)-underscale(1))*M);
 dindx(dindx<1)=1;
@@ -142,7 +140,7 @@ OCOL = nan(size(COL));    % set all values to NaN
 switch (type)
     case 'label'
         % if plotting labels, use the numerical vlaues themselves
-        dindx=[data(T.faces(k(:),1),1) data(T.faces(k(:),2),1) data(T.faces(k(:),3),1)]';
+        dindx=[data(C.faces(k(:),1),1) data(C.faces(k(:),2),1) data(C.faces(k(:),3),1)]';
         for i=1:3 % Color channnel
             for j=1:size(dindx,1) % Over the three vertices
                 indx = find(dindx(j,:)>0 & dindx(j,:)<=colormax);
@@ -151,7 +149,7 @@ switch (type)
         end;
     case 'func'
         % Otherwise take the mean value
-        d=[data(T.faces(k(:),1),1) data(T.faces(k(:),2),1) data(T.faces(k(:),3),1)]';
+        d=[data(C.faces(k(:),1),1) data(C.faces(k(:),2),1) data(C.faces(k(:),3),1)]';
         if (isempty(cscale) || any(isnan(cscale)))
             cscale=[min(d(:)) max(d(:))];
         end;
@@ -171,7 +169,7 @@ switch (type)
         end;
     case 'rgb'
         for i=1:3  % over color channels 
-            OCOL(:,:,i)=[data(T.faces(k(:),1),i) data(T.faces(k(:),2),i) data(T.faces(k(:),3),i)]';
+            OCOL(:,:,i)=[data(C.faces(k(:),1),i) data(C.faces(k(:),2),i) data(C.faces(k(:),3),i)]';
         end; 
     otherwise
         error('unknown data type');
@@ -183,7 +181,7 @@ if (isscalar(alpha))
     COL(indx) = alpha.*OCOL(indx)+(1-alpha)*COL(indx); % Set opacacy of overlay 
 else 
     for i=1:3 
-        ALPHA(:,:,i) = [alpha(T.faces(k(:),1),1) alpha(T.faces(k(:),2),1) alpha(T.faces(k(:),3),1)]';
+        ALPHA(:,:,i) = [alpha(C.faces(k(:),1),1) alpha(C.faces(k(:),2),1) alpha(C.faces(k(:),3),1)]';
     end; 
     COL(indx) = ALPHA(indx).*OCOL(indx)+(1-ALPHA(indx)).*COL(indx); 
 end; 

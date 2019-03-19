@@ -4,18 +4,33 @@
    </MetaData>
    <DataFile Structure="Cerebellum"
              DataFileType="SURFACE"
-             Selected="true">
+             Selected="false">
       WHITE_SUIT.surf.gii
    </DataFile>
    <DataFile Structure="Cerebellum"
              DataFileType="SURFACE"
-             Selected="true">
+             Selected="false">
       PIAL_SUIT.surf.gii
    </DataFile>
    <DataFile Structure="Cerebellum"
              DataFileType="SURFACE"
              Selected="true">
       FLAT.surf.gii
+   </DataFile>
+   <DataFile Structure="Cerebellum"
+             DataFileType="BORDER"
+             Selected="true">
+      fissures_flat2.border
+   </DataFile>
+   <DataFile Structure="Cerebellum"
+             DataFileType="LABEL"
+             Selected="true">
+      Buckner_17Networks.label.gii
+   </DataFile>
+   <DataFile Structure="Cerebellum"
+             DataFileType="LABEL"
+             Selected="true">
+      Cerebellum-lobules.label.gii
    </DataFile>
    <DataFile Structure="Cerebellum"
              DataFileType="METRIC"

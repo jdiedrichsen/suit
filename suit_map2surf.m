@@ -39,9 +39,9 @@ if (isempty(defaults))
     global defaults;
 end; 
 space    = ''; 
-pial     = 'PIAL_SUIT.coord.gii';
-white    = 'WHITE_SUIT.coord.gii';
-flat     = 'FLAT.coord.gii'; 
+pial     = 'PIAL_SUIT.surf.gii';
+white    = 'WHITE_SUIT.surf.gii';
+flat     = 'FLAT.surf.gii'; 
 flat_dir = []; 
 depths   = [0 0.2 0.4 0.6 0.8 1];
 
@@ -78,8 +78,8 @@ end;
 %   Check the atlas space and load the appropriate surface files 
 % -----------------------------------------------------------------
 if (~isempty(space))
-    pial=sprintf('PIAL_%s.coord.gii',space); 
-    white=sprintf('WHITE_%s.coord.gii',space); 
+    pial=sprintf('PIAL_%s.surf.gii',space); 
+    white=sprintf('WHITE_%s.surf.gii',space); 
 end; 
 try 
     C1=gifti(fullfile(flat_dir,pial));
@@ -203,5 +203,3 @@ elseif (isnumeric(V))
         end;
     end;
 end;
-
-
