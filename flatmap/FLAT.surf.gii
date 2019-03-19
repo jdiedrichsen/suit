@@ -13,10 +13,6 @@
          <Value><![CDATA[2015-06-10T11:27:33]]></Value>
       </MD>
       <MD>
-         <Name><![CDATA[comment]]></Name>
-         <Value><![CDATA[Convert Sphere to Flat Multiresolution Morphing Flat : reference surface=PIAL.coord morphing surface=FLAT_initial.coord cycle 0: iterations=0 10 20 40 60 70 60 linear force=0.5 angular force=0.5 step size=0.5 smoothing strength=1 iterations=50 edge iterations=10 cycle 1: iterations=0 10 20 40 60 60 50 linear force=0.5 angular force=0.5 step size=0.5 smoothing strength=1 iterations=50 edge iterations=10 cycle 2: iterations=0 10 20 40 60 60 50 linear force=0.5 angular force=0.5 step size=0.5 smoothing strength=1 iterations=50 edge iterations=10 cycle 3: iterations=0 20 20 40 60 50 30 linear force=0.5 angular force=0.5 step size=0.5 smoothing strength=1 iterations=50 edge iterations=10 cycle 4: iterations=0 20 20 40 60 50 30 linear force=0.4 angular force=0.5 step size=0.5 smoothing strength=1 iterations=50 edge iterations=10 Multiresolution Morphing with CARET v5.65]]></Value>
-      </MD>
-      <MD>
          <Name><![CDATA[configuration_id]]></Name>
          <Value><![CDATA[FLAT]]></Value>
       </MD>
@@ -54,6 +50,14 @@
       <MD>
          <Name><![CDATA[AnatomicalStructurePrimary]]></Name>
          <Value><![CDATA[Cerebellum]]></Value>
+      </MD>
+      <MD>
+         <Name><![CDATA[configuration_id]]></Name>
+         <Value><![CDATA[FLAT]]></Value>
+      </MD>
+      <MD>
+      	<Name><![CDATA[GeometricType]]></Name>
+        <Value><![CDATA[Flat]]></Value>
       </MD>
       <MD>
          <Name><![CDATA[Name]]></Name>
