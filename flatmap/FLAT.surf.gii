@@ -52,12 +52,8 @@
          <Value><![CDATA[Cerebellum]]></Value>
       </MD>
       <MD>
-         <Name><![CDATA[configuration_id]]></Name>
-         <Value><![CDATA[FLAT]]></Value>
-      </MD>
-      <MD>
-      	<Name><![CDATA[GeometricType]]></Name>
-        <Value><![CDATA[Flat]]></Value>
+         <Name><![CDATA[GeometricType]]></Name>
+         <Value><![CDATA[Flat]]></Value>
       </MD>
       <MD>
          <Name><![CDATA[Name]]></Name>
@@ -66,6 +62,10 @@
       <MD>
          <Name><![CDATA[UniqueID]]></Name>
          <Value><![CDATA[{08979ded-d073-4bbc-8716-a8b880a0bfc9}]]></Value>
+      </MD>
+      <MD>
+         <Name><![CDATA[configuration_id]]></Name>
+         <Value><![CDATA[FLAT]]></Value>
       </MD>
    </MetaData>
    <CoordinateSystemTransformMatrix>

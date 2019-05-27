@@ -4,12 +4,12 @@
    </MetaData>
    <DataFile Structure="Cerebellum"
              DataFileType="SURFACE"
-             Selected="true">
+             Selected="false">
       WHITE_SUIT.surf.gii
    </DataFile>
    <DataFile Structure="Cerebellum"
              DataFileType="SURFACE"
-             Selected="true">
+             Selected="false">
       PIAL_SUIT.surf.gii
    </DataFile>
    <DataFile Structure="Cerebellum"
@@ -30,12 +30,22 @@
    <DataFile Structure="Cerebellum"
              DataFileType="LABEL"
              Selected="true">
-      Cerebellum-lobules.label.gii
+      Lobules.label.gii
    </DataFile>
    <DataFile Structure="Cerebellum"
              DataFileType="LABEL"
              Selected="true">
-      Lobules.label.gii
+      Buckner_7Networks.label.gii
+   </DataFile>
+   <DataFile Structure="Cerebellum"
+             DataFileType="LABEL"
+             Selected="true">
+      Ji_10Networks.label.gii
+   </DataFile>
+   <DataFile Structure="Cerebellum"
+             DataFileType="LABEL"
+             Selected="true">
+      MDTB_10Regions.label.gii
    </DataFile>
    <DataFile Structure="Cerebellum"
              DataFileType="METRIC"
@@ -46,5 +56,10 @@
              DataFileType="METRIC"
              Selected="true">
       MDTB_allMaps.func.gii
+   </DataFile>
+   <DataFile Structure="All"
+             DataFileType="SCENE"
+             Selected="false">
+      SUIT.C.scene
    </DataFile>
 </CaretSpecFile>

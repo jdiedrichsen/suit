@@ -15,7 +15,7 @@ function Data=suit_map2surf(input,varargin)
 %               N x 2 Matrix of coordinates, if input were foci
 % VARARGIN: 
 %    'space':   SUIT/FSL/SPM: which normalisation routine was used for the
-%               images, determine the atlas surface used 
+%               images, determine the atlas surface used (default: SUIT)
 %    'depths':  Vector of Depths at which the line is sampled. 0 refers to the outer surface, 
 %               1 to the inner surface. Default are 6 equally spaced positions 
 %               along the line: [0 0.2 0.4 0.6 0.8 1]
@@ -23,7 +23,7 @@ function Data=suit_map2surf(input,varargin)
 %               undefined
 %    'white':   File Name for white surface (if not default) 
 %    'stats':   Function that determined how to integrate data over the different sampling depth 
-%               'nanmean'     Is default and used for activation data 
+%               'nanmean'     Should be used for activation data (default)
 %               'mode'        Should be used discrete labels are sampled and the most frequent label is assigned 
 %               'minORmax'    Maps the minumum or maximum values, glass brain projection for statistical maps
 %       

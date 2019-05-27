@@ -17,6 +17,10 @@
          <Value><![CDATA[2015-06-10T11:33:29]]></Value>
       </MD>
       <MD>
+         <Name><![CDATA[PaletteNormalizationMode]]></Name>
+         <Value><![CDATA[NORMALIZATION_SELECTED_MAP_DATA]]></Value>
+      </MD>
+      <MD>
          <Name><![CDATA[encoding]]></Name>
          <Value><![CDATA[XML_BASE64_GZIP]]></Value>
       </MD>
