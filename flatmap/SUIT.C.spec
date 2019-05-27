@@ -4,12 +4,12 @@
    </MetaData>
    <DataFile Structure="Cerebellum"
              DataFileType="SURFACE"
-             Selected="false">
+             Selected="true">
       WHITE_SUIT.surf.gii
    </DataFile>
    <DataFile Structure="Cerebellum"
              DataFileType="SURFACE"
-             Selected="false">
+             Selected="true">
       PIAL_SUIT.surf.gii
    </DataFile>
    <DataFile Structure="Cerebellum"
@@ -20,7 +20,7 @@
    <DataFile Structure="Cerebellum"
              DataFileType="BORDER"
              Selected="true">
-      fissures_flat2.border
+      fissures_flat.border
    </DataFile>
    <DataFile Structure="Cerebellum"
              DataFileType="LABEL"
@@ -33,8 +33,18 @@
       Cerebellum-lobules.label.gii
    </DataFile>
    <DataFile Structure="Cerebellum"
+             DataFileType="LABEL"
+             Selected="true">
+      Lobules.label.gii
+   </DataFile>
+   <DataFile Structure="Cerebellum"
              DataFileType="METRIC"
              Selected="true">
       SUIT.shape.gii
+   </DataFile>
+   <DataFile Structure="Cerebellum"
+             DataFileType="METRIC"
+             Selected="true">
+      MDTB_allMaps.func.gii
    </DataFile>
 </CaretSpecFile>
