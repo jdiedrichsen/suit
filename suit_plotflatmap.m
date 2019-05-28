@@ -22,6 +22,7 @@ function varargout=suit_plotflatmap(data,varargin)
 %  'threshold',val      Shows only values above a certain threshold
 %  'xlims',[xmin xmax]  Limits of the x-coordinate
 %  'ylims',[ymin ymax]  Limits of the y-coordinate
+%  'alpha',val          Alpha-value (Opacity) of the overlay 
 %
 % (c) joern.diedrichsen@googlemail.com, 2014, 2019
 % EXAMPLES:
@@ -58,7 +59,7 @@ bordersize = 8;                     % Size of the border points
 borderstyle = 'k.';                 % Color and symbol for border points 
 xlims      =  [-100 100];           % X-limits for Figure
 ylims      =  [-100 100];           % Y-limits for Figure
-alpha      = 1;                     % Opacacy of the overlay 
+alpha      = 1;                     % Opacity of the overlay 
 vararginoptions(varargin,{'coord','topo','underlay','underscale','undermap',...
     'type','threshold','cscale','cmap','border','bordersize','borderstyle','xlims','ylims',...
     'flat_dir','alpha'});
