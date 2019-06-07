@@ -1,8 +1,7 @@
 ## Functional example data sets in SUIT space
 #### HCP task data: 
 
-HCP*.nii contain the group T-values for 100 subjects from the human connectome data set, which have been morphed slightly from the FSL space into SUIT space. 
-
+HCP*.nii contain the group activity maps for 186 subjects from the human connectome project (HCP) task data set, which have been individually masked and normalized into SUIT space (for details, see King et al., 2019).
 The tasks and contrasts are described in detail in: 
 
 Barch DM, Burgess GC, Harms MP, Petersen SE, Schlaggar BL, Corbetta M, Glasser MF, Curtiss S, Dixit S, Feldt C, Nolan D, Bryant E, Hartley T, Footer O, Bjork JM, Poldrack R, Smith S, Johansen-Berg H, Snyder AZ, Van Essen DC (2013) Function in the human connectome: task-fMRI and individual differences in behavior. *Neuroimage* 80:169-189.

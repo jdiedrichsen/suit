@@ -62,4 +62,9 @@
              Selected="false">
       SUIT.C.scene
    </DataFile>
+   <DataFile Structure="Invalid"
+             DataFileType="VOLUME"
+             Selected="true">
+      ../templates/SUIT.nii
+   </DataFile>
 </CaretSpecFile>
