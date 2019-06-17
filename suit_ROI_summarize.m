@@ -77,7 +77,7 @@ end;
 % Get (x,y,z) - get coordinates for all locations
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 X=spm_read_vols(Vatlas);
-numregions = max(X); 
+numregions = max(X(:)); 
 for r=1:numregions
     Xindx=find(X==r);
     [x{r},y{r},z{r}]=ind2sub(size(X),Xindx);
