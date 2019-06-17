@@ -16,4 +16,3 @@ King, M., Hernandez-Castillo, C.R., Poldrack, R.R., Ivry, R., and Diedrichsen, J
 Wiestler_2011_motor_z.nii are the z-value of average classification for the movement of individual fingers, which can be used as a functional localiser for the two cerebellar finger representations. For details see:  
 
 Wiestler T, McGonigle DJ, Diedrichsen J (2011) Integration of sensory and motor representations of single fingers in the human cerebellum. *Journal of Neurophysiology* 105:3042-3053.
-
