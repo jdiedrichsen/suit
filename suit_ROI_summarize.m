@@ -40,12 +40,12 @@ function D=suit_ROI_summarize(images,varargin);
 
 global defaults;
 spm_dir = fileparts(which('spm'));
-atlas=[spm_dir '/toolbox/suit/atlasesSUIT/Lobules-SUIT.nii'];
-stats={'nanmean','max'};
+atlas=[spm_dir '/toolbox/suit/atlasesSUIT/MDTB_10Regions.nii'];
+stats={'nanmean'};
 regionname={}; 
 outfilename=[];
 
-SCCSid   = '2.7';
+SCCSid   = '3.4';
 SPMid    = spm('FnBanner',mfilename,SCCSid);
 
 
@@ -111,10 +111,12 @@ for i=1:length(V)
     end;
 end;
 
-if (isempty(outfilename))
-    outfilename=uiputfile({'*.txt', 'Tab delimted text file'},'Save Table as');
-end;
-dsave(outfilename,D);
+if (nargout==0) 
+    if (isempty(outfilename))
+        outfilename=uiputfile({'*.txt', 'Tab delimted text file'},'Save Table as');
+    end;
+    dsave(outfilename,D);
+end; 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % dsave
