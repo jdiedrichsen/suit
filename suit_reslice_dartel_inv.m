@@ -23,7 +23,7 @@ function suit_reslice_dartel_inv(job)
 
 % Directiores
 spmDir   =  fileparts(which('spm'));
-LobAtlas =  [spmDir '/toolbox/suit/atlas/Cerebellum-SUIT.nii'];
+LobAtlas =  [spmDir '/toolbox/suit/atlasesSUIT/Lobules-SUIT.nii'];
 
 % Check the resample input
 if (~isfield(job,'resample'));job.resample={LobAtlas};end

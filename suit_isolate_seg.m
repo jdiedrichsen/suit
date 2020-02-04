@@ -104,7 +104,7 @@ vararginoptions(varargin,{'maskp','keeptempfiles','bb'});
     J.tissue(2).warped = [0 0];
     J.tissue(3).tpm = {[prior_dir,'/',priors,',3']};
     J.tissue(3).ngaus = 2;
-    J.tissue(3).native = [0 0];
+    J.tissue(3).native = [1 0];
     J.tissue(3).warped = [0 0];
     J.tissue(4).tpm = {[prior_dir,'/',priors,',4']};
     J.tissue(4).ngaus = 4;
@@ -185,6 +185,7 @@ save_vol(M,[source_dir,'/c_',Sname,'_pcereb',ext],s1);
 if (keeptempfiles==0)
     movefile([source_dir,'/c1',Sname,ext],[source_dir,'/',Sname,'_seg1',ext]);
     movefile([source_dir,'/c2',Sname,ext],[source_dir,'/',Sname,'_seg2',ext]);
+    rm_imgfile([source_dir,'/c3',Sname],ext);
     rm_imgfile([source_dir,'/c7',Sname],ext);
     rm_imgfile([source_dir,'/c8',Sname],ext);
     rm_imgfile([source_dir,'/c_',Sname,'_seg1'],ext);
