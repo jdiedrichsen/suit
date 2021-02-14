@@ -48,7 +48,7 @@ end;
 flat_dir   = [];                    %
 surf       = 'FLAT.surf.gii';       % Surface file for flat map
 underlay   = 'SUIT.shape.gii';      % File determining colring of underlay
-underscale = [-1 0.5];              % Color scale [min max] for the overlay
+underscale = [-1 0.5];              % Color scale [min max] for the underlay
 undermap   = gray;                    % Color map for underlay
 type       = 'func';                % 'func': funtional activation 'label': categories 'rgb': RGB values
 threshold  = [];                    % Threshold for functional overlay
