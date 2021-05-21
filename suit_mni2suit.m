@@ -1,16 +1,16 @@
 function suit_mni2suit(input,varargin)
-% Apply the deformation field to an image to transform it from MNI space 
-% to suit space or viceversa.
+% Apply a deformation field to an image to transform it from MNI space 
+% to suit space or the other way around
 %
 % INPUT:
 %   input:  Image to transform
 %
 % VARARGIN:
-%   def:    'mni2suit' (defualt)   Direction of the trasnformation
+%   def:    'mni2suit' (default)   Direction of the trasnformation
 %           'suit2mni'
 %   mask:   Set to 1 to mask image before transformation, this creates a
 %           new file with prefix 'm_' to be used as input.
-%   Interp: Interpolation, defualt is nearest neighbour (0) 
+%   Interp: Interpolation, default is nearest neighbour (0) 
 %           set to 1 for trilinear interpolation 
 % 
 % OUTPUT:
