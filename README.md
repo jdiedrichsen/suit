@@ -40,7 +40,7 @@ The SUIT toolbox has been developed by J. Diedrichsen (joern.diedrichsen@googlem
 ## Installation
 The suit-toolbox requires Matlab (Version 6.5 and higher) and [SPM]("http://www.fil.ion.ac.uk/spm">).</a> The newest version requires SPM12, but the old functions are still available for backward compatibility . A full standalone version for the suit-toolbox in matlab is not planned. Usage of the isolation or normalization functions, however, does not require that the analysis is conducted under SPM. 
 
-    * Unzip the archive and place the SUIT folder in the `<SPM_HOME>/toolbox/` directory. Alternatively you can keep the toolbox somewhere else and place a symbolic link in the `<SPM_HOME>/toolbox/` directory.
-    * Start Matlab and SPM12. Select fMRI. SUIT should now be present as a option under the toolbox drop down menu.
-    * All functionality can also be directly accessed by calling the corresponding functions (`suit_*`) from the matlab prompt. 
-    * The template images can be found in `<SPM_HOME>/toolbox/SUIT/templates`. If you like, create a copy of these templates at a more accessible place.
+- Unzip the archive and place the SUIT folder in the `<SPM_HOME>/toolbox/` directory. Alternatively you can keep the toolbox somewhere else and place a symbolic link in the `<SPM_HOME>/toolbox/` directory.
+- Start Matlab and SPM12. Select fMRI. SUIT should now be present as a option under the toolbox drop down menu.
+- All functionality can also be directly accessed by calling the corresponding functions (`suit_*`) from the matlab prompt.
+- The template images can be found in `<SPM_HOME>/toolbox/SUIT/templates`. If you like, create a copy of these templates at a more accessible place.
