@@ -1,6 +1,6 @@
 # Spatially Unbiased Infratentorial Template (SUIT) 
 
- SUIT is a Matlab toolbox dedicated to the analysis of imaging data of the human cerebellum. The toolbox contains a high-resolution atlas template of the human cerebellum and brainstem, based on the anatomy of 20 young healthy individuals. By using automated isolation and nonlinear normalization methods, a more accurate intersubject-alignment than current whole-brain methods can be achieved. The toolbox you to...
+SUIT is a Matlab toolbox dedicated to the analysis of imaging data of the human cerebellum. The toolbox contains a high-resolution atlas template of the human cerebellum and brainstem, based on the anatomy of 20 young healthy individuals. By using automated isolation and nonlinear normalization methods, a more accurate intersubject-alignment than current whole-brain methods can be achieved. The toolbox you to...
 
 - automatically isolate cerebellar structures from the cerebral cortex based on an anatomical image.
 - achieve accurate anatomical normalisation of cerebellar structures into atlas space using the Dartel algorithm.
@@ -11,7 +11,7 @@
 - use a collection of functional atlases based on task-based data and task-free connectivity to define regions of interest.
 - improve normalization of the deep cerebellar nuclei using an ROI-driven normalization.
 
-For more information on SUIT, please visit http://diedrichsenlab.org/imaging/suit.htm.
+For more information on SUIT, please visit http://diedrichsenlab.org/imaging/suit.htm. Some functionality of the SUIT toolbox is also covered under the current Python release at https://github.com/DiedrichsenLab/SUITPy. For a collection of cerebellar atlases and contrast maps, see https://github.com/DiedrichsenLab/cerebellar_atlases. 
 
 ## Licence and Acknowledgements
 
@@ -37,12 +37,10 @@ The SUIT toolbox has been developed by J. Diedrichsen (joern.diedrichsen@googlem
 
 - Hernandez-Castillo, CR., Limperopoulos, C., & Diedrichsen, J. (2019). A representative template of the neonatal cerebellum. *Neuroimage. 184*, 450-454. 
 
-##### Connectivity atlases
+## Installation
+The suit-toolbox requires Matlab (Version 6.5 and higher) and [SPM]("http://www.fil.ion.ac.uk/spm">).</a> The newest version requires SPM12, but the old functions are still available for backward compatibility . A full standalone version for the suit-toolbox in matlab is not planned. Usage of the isolation or normalization functions, however, does not require that the analysis is conducted under SPM. 
 
-- Buckner, R. L., Krienen, F. M., Castellanos, A., Diaz, J. C., & Yeo, B. T. (2011). The organization of the human cerebellum estimated by intrinsic functional connectivity. *J Neurophysiol*, 106(5), 2322-2345.
-- Ji, J. L., Spronk, M., Kulkarni, K., Repovs, G., Anticevic, A., & Cole, M. W. (2019). Mapping the human brain’s cortical-subcortical functional network organization. NeuroImage, 185, 35–57.
-
-##### Task-based data sets
-
-- King, M., Hernandez-Castillo, C.R., Poldrack, R. Ivry, R., Diedrichsen, J. (in press). A multi-domain task battery reveals functional boundaries in the human cerebellum. *Nature Neuroscience.* 
-- Barch DM, Burgess GC, Harms MP, Petersen SE, Schlaggar BL, Corbetta M, Glasser MF, Curtiss S, Dixit S, Feldt C, Nolan D, Bryant E, Hartley T, Footer O, Bjork JM, Poldrack R, Smith S, Johansen-Berg H, Snyder AZ, Van Essen DC (2013) Function in the human connectome: task-fMRI and individual differences in behavior. *Neuroimage* 80:169-189.
+    * Unzip the archive and place the SUIT folder in the `<SPM_HOME>/toolbox/` directory. Alternatively you can keep the toolbox somewhere else and place a symbolic link in the `<SPM_HOME>/toolbox/` directory.
+    * Start Matlab and SPM12. Select fMRI. SUIT should now be present as a option under the toolbox drop down menu.
+    * All functionality can also be directly accessed by calling the corresponding functions (`suit_*`) from the matlab prompt. 
+    * The template images can be found in `<SPM_HOME>/toolbox/SUIT/templates`. If you like, create a copy of these templates at a more accessible place.
