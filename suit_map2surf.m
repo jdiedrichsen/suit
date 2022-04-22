@@ -4,7 +4,7 @@ function Data=suit_map2surf(input,varargin)
 % representation 
 % 
 % INPUT: 
-%    input:     Data to be plotted. This could be: 
+%    input:     Data to be mapped to the surface. This could be: 
 %               - NxP Character array of file names 
 %               - Nx1 Cell array of filenames that should be mapped 
 %               - Nx1 Array of volume structures (possibly with V.dat field)

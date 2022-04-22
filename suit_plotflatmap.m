@@ -18,6 +18,7 @@ function varargout=suit_plotflatmap(data,varargin)
 %  'cscale',[min max]   Color scale: determines the mapping of values to
 %                        color map
 %  'border',borderfile  Specifies a borderfile to plot. Use [] for no borders
+%  'borderstyle','k.'   Color and marker style string for the borders
 %  'bordersize',pt      Border point size in pt (default 8)
 %  'threshold',val      Shows only values above a certain threshold
 %  'xlims',[xmin xmax]  Limits of the x-coordinate
