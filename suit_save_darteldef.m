@@ -16,7 +16,11 @@ function suit_save_darteldef(name,varargin)
 %    saves the following file" 
 %       y_<name>_suitdef.nii: Deformation image 
 % ----------------------------------------------------------------------
+% Typical usuage:
+% suit_save_darteldef('sub01-anatomical','wdir','/usr/name/projectdir')
+% ----------------------------------------------------------------------
 % Joern Diedrichsen 2022 joern.diedrichsen@googlemail.com
+
 
 % Deal with variable arguments:
 wdir=[]; 
