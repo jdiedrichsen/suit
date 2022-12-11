@@ -1,4 +1,4 @@
-function D=suit_ROI_summarize(images,varargin);
+function D=suit_lobuli_summarize(images,varargin);
 % function varargout=suit_ROI_summarize(images,varargin);
 % Uses cerebellar ROIs from an atlas image to summarize cerebellar data 
 %__________________________________________________________________________
