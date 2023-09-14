@@ -22,8 +22,10 @@ function suit_reslice_dartel_inv(job)
 %
 
 % Directiores
+global defaults_suit;
 spmDir   =  fileparts(which('spm'));
-LobAtlas =  [spmDir '/toolbox/suit/atlasesSUIT/Lobules-SUIT.nii'];
+
+LobAtlas =  defaults_suit.summarize.atlas;
 
 % Check the resample input
 if (~isfield(job,'resample'));job.resample={LobAtlas};end

@@ -969,11 +969,11 @@ stats.num     = [2 Inf];
 % REslice_inv
 % ---------------------------------------------------------------------
 summarize         = cfg_exbranch;
-summarize.tag     = 'lobuli';
-summarize.name    = 'Summarize statistics by lobules';
+summarize.tag     = 'ROI';
+summarize.name    = 'Summarize images by ROIs (atlas)';
 summarize.val     = {sample atlas output outdir stats};
-summarize.help    = {'Allows to calculate statistics for different ROIs defined by the lobuli in the probabilsitic atlas',''};
-summarize.prog = @suit_run_lobuli_summarize;
+summarize.help    = {'Calculate statistics on images for different ROIs defined by an atas',''};
+summarize.prog = @suit_run_ROI_summarize;
 
 
 % ---------------------------------------------------------------------

@@ -38,9 +38,9 @@ function D=suit_lobuli_summarize(images,varargin);
 % v.2.5: made compatible with SPM8-jobmanager (26/08/2010) 
 % v.3.3: Introduced suit_ROI_summarize 
 
-global defaults;
+global defaults_suit;
 spm_dir = fileparts(which('spm'));
-atlas=[spm_dir '/toolbox/suit/atlasesSUIT/Lobules-SUIT.nii'];
+atlas=defaults_suit.summarize.atlas{1};
 stats={'nanmean'};
 regionname={'Left I_IV','Right I_IV','Left V','Right V',...
     'Left VI','Vermis VI','Right VI',...

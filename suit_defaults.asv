@@ -14,7 +14,7 @@ function suit_defaults
 % v.2.5.1: SWD problem fixed from new releases of SPM 8 
 %_______________________________________________________________________
 % Copyright (C) 2010 
-% Joern Diedrichsen (joern.diedrichsen@googlemail.com)
+% Joern Diedrichsen (j.diedrichsen@ucl.ac.uk)
 
 spm_Dir= fileparts(which('spm'));
 global defaults_suit; 
@@ -115,8 +115,8 @@ defaults_suit.reslice_inv.prefix='i';
 defaults_suit.reslice_inv.interp = 0;
 
 % Lobuli Summarize function
-defaults_suit.summarize.atlas_dir={[spm_Dir '/toolbox/cerebellar_atlases']};
-defaults_suit.summarize.atlas={[defaults_suit.summarize.atlas_dir{1} '/Diedrichsen_2009/atl-Anatom_space-SUIT_dseg.nii']};
+defaults_suit.summarize.atlas_dir={[spm_Dir '/toolbox/cerebellar_atlasses']};
+defaults_suit.summarize.atlas={[spm_Dir '/toolbox/suit/atlas/Cerebellum-SUIT.nii']};
 defaults_suit.summarize.stats={'nanmean'};
 
 % normalize neonate

@@ -6,7 +6,7 @@ function D=suit_ROI_summarize(images,varargin);
 %   images: character or cell array of images to summarize
 %__________________________________________________________________________
 % OPTIONS:
-%   'atlas',atlas_image: Atlas image (default: MDTB_10regions.nii)
+%   'atlas',atlas_image: Atlas image (defaults_suit.summarize.atlas) 
 %   'regionname', names:   Cell array of region names 
 %   'outfilename',name : Name under which the structure will be saved as txt-file
 %   'stats',{'nanmean','max',...}: Name of statistical function to be
@@ -36,11 +36,12 @@ function D=suit_ROI_summarize(images,varargin);
 % v.2.4: Compatibility update for SPM8 
 %       + bugfix for missing spmj_affine_transform 
 % v.2.5: made compatible with SPM8-jobmanager (26/08/2010) 
-% v.3.3: Introduced suit_ROI_summarize 
+% v.3.3: Introduced suit_ROI_summarize
+% v.3.4: 
 
-global defaults;
+global defaults_suit;
 spm_dir = fileparts(which('spm'));
-atlas=[spm_dir '/toolbox/suit/atlasesSUIT/MDTB_10Regions.nii'];
+atlas=defaults_suit.summarize.atlas{1};
 stats={'nanmean'};
 regionname={}; 
 outfilename=[];
@@ -49,7 +50,7 @@ SCCSid   = '3.4';
 SPMid    = spm('FnBanner',mfilename,SCCSid);
 
 
-vararginoptions(varargin,{'outfilename','atlas','stats'});
+vararginoptions(varargin,{'outfilename','atlas','stats','regionname'});
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Get the images
@@ -59,6 +60,9 @@ if (nargin<1 || isempty(images))
 end;
 
 if (~isstruct(atlas))
+    if (~exist(atlas,'file'))
+        error(sprintf('Atlas file: %s not found. \nYou may have to download github/DiedrichsenLab/cerebellar_atlases, or set the location of the atlas directory in suit_defaults.m',atlas));
+    end
     Vatlas=spm_vol(atlas);
 else
     Vatlas=atlas;
@@ -95,7 +99,7 @@ for i=1:length(V)
         T.image=i;
         T.region=r;
         if (~isempty(regionname) && r<=length(regioname)); 
-            T.regionname={namereg{r}};
+            T.regionname={regionname{r}};
         else 
             T.regionname={sprintf('region %d',r)}; 
         end; 
