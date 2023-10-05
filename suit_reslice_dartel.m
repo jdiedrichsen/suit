@@ -33,7 +33,7 @@ function suit_reslice_dartel(job,varargin);
 %         for s=1
 %             job.subj(s).affineTr={['Affine_<name>' subjNames{s} '_seg1.mat']};       % where subjName is a cell array of subject names
 %             job.subj(s).flowfield={['u_a_<name>' subjNames{s} '_seg1.nii']};       
-%             job.subj(s).resample{1}={['<name>' subjNames{s} '.nii']}; % Cell array containing all images to be resliced.
+%             job.subj(s).resample={['<name>' subjNames{s} '.nii']}; % Cell array containing all images to be resliced.
 %             job.subj(s).mask={['c_struct<name>' subjNames{s} '_pcereb_corr.nii']}; % Mask to be applied 
 %         end; 
 %        suit_reslice_dartel(job); 
