@@ -23,9 +23,12 @@ function suit_reslice_dartel_inv(job)
 
 % Directiores
 global defaults_suit;
-spmDir   =  fileparts(which('spm'));
+if isempty(defaults_suit)
+    suit_defaults;
+end
 
-LobAtlas =  defaults_suit.summarize.atlas;
+spmDir   =  fileparts(which('spm'));
+LobAtlas =  defaults_suit.summarize.atlas{1};
 
 % Check the resample input
 if (~isfield(job,'resample'));job.resample={LobAtlas};end
