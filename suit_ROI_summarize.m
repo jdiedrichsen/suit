@@ -40,8 +40,13 @@ function D=suit_ROI_summarize(images,varargin);
 % v.3.4: 
 
 global defaults_suit;
-spm_dir = fileparts(which('spm'));
+if isempty(defaults_suit)
+    suit_defaults;
+end
+
+
 atlas=defaults_suit.summarize.atlas{1};
+
 stats={'nanmean'};
 regionname={}; 
 outfilename=[];
@@ -61,7 +66,7 @@ end;
 
 if (~isstruct(atlas))
     if (~exist(atlas,'file'))
-        error(sprintf('Atlas file: %s not found. \nYou may have to download github/DiedrichsenLab/cerebellar_atlases, or set the location of the atlas directory in suit_defaults.m',atlas));
+        error(sprintf('Atlas file: %s not found. \nYou may have to download github/DiedrichsenLab/cerebellar_atlases, \n or set the location of the atlas directory in suit_defaults.m',atlas));
     end
     Vatlas=spm_vol(atlas);
 else
