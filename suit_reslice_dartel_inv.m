@@ -31,7 +31,12 @@ spmDir   =  fileparts(which('spm'));
 LobAtlas =  defaults_suit.summarize.atlas{1};
 
 % Check the resample input
-if (~isfield(job,'resample'));job.resample={LobAtlas};end
+if (~isfield(job,'resample'))
+    if (~exist(LobAtlas,'file'))
+        error(sprintf('Atlas file: %s not found. \nYou may have to download github/DiedrichsenLab/cerebellar_atlases, \n or set the location of the atlas directory in suit_defaults.m',LobAtlas));
+    end
+    job.resample={LobAtlas};
+end
 
 % Load the Affine Matrix
 load(char(job.Affine));
