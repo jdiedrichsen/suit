@@ -1,6 +1,6 @@
 function spm_suit
 %_______________________________________________________________________
-% @(#)spm_suit.m	3.0 Jörn Diedrichsen 01/03/2015
+% @(#)spm_suit.m	3.7 Jörn Diedrichsen
 % Toolbox for normalisation, analysis and display of cerebellar data 
 % SUIT refers to 'Spatially unbiased infra-tentorial template'. 
 % The newest version of the toolbox contains functionality for 
@@ -12,7 +12,7 @@ function spm_suit
 % SUIT Toolbox: see Diedrichsen (2006), Diedrichsen et al. (2011a,b). 
 % Diedrichsen & Zotow (in press). 
 % http://www.icn.ucl.ac.uk/motorcontrol/imaging/suit.htm
-SPMid = spm('FnBanner',mfilename,'3.3');
+SPMid = spm('FnBanner',mfilename,'3.7');
 [Finter,Fgraph,CmdLine] = spm('FnUIsetup','Spatially unbiased infra-tentorial template (SUIT)');
 
 fig = spm_figure('GetWin','Interactive');

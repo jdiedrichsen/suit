@@ -51,7 +51,7 @@ stats={'nanmean'};
 regionname={}; 
 outfilename=[];
 
-SCCSid   = '3.4';
+SCCSid   = '3.7';
 SPMid    = spm('FnBanner',mfilename,SCCSid);
 
 

@@ -60,7 +60,7 @@ for i=1:length(fields)
 end; 
 
 
-SCCSid   = '3.0';
+SCCSid   = '3.7';
 SPMid    = spm('FnBanner',mfilename,SCCSid);
 
 % Loop over subjects

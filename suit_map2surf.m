@@ -55,7 +55,7 @@ depth_tolerance = 3;   % How many mm above or below the surface is it allowed to
 vararginoptions(varargin,{'pial','white','space','stats','ignore_zeros','depths'});
 numDepths=length(depths);
 
-SCCSid   = '3.1';
+SCCSid   = '3.7';
 SPMid    = spm('FnBanner',mfilename,SCCSid);
 
 % -----------------------------------------------------------------
