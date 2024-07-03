@@ -64,6 +64,10 @@ if (nargin<1 || isempty(images))
     images=spm_select(inf,'image','Select images to do statistics on');
 end;
 
+if endsWith(atlas, ',1')
+    atlas = atlas(1:end-2); 
+end;
+
 if (~isstruct(atlas))
     if (~exist(atlas,'file'))
         error(sprintf('Atlas file: %s not found. \nYou may have to download github/DiedrichsenLab/cerebellar_atlases, \n or set the location of the atlas directory in suit_defaults.m',atlas));
