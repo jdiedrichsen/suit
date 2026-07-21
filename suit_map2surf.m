@@ -67,7 +67,7 @@ if (isempty(flat_dir))
         case {'SPM5','SPM8'}
             suit_dir=fileparts(which('suit_normalize_dartel.m'));
             flat_dir=fullfile(suit_dir,'flatmap');
-        case {'SPM12b','SPM12'}
+        case {'SPM12b','SPM12','SPM25'}
             flat_dir=fullfile(defaults.tbx.dir{1},'suit','flatmap');
         otherwise
             warning(sprintf('Unknown SPM-version: %s',spmVer));

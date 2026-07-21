@@ -72,8 +72,8 @@ SPMid    = spm('FnBanner',mfilename,SCCSid);
 %  Determine directory for the flatmap files
 % -----------------------------------------------------------------
 spmVer=spm('Ver');
-if ~strcmp(spmVer,'SPM12')
-    error('plot flatmap requires SPM12 (for gifti support)');
+if ~strcmp(spmVer,'SPM12') && ~strcmp(spmVer,'SPM25')
+    error('plot flatmap requires SPM12 or SPM25 (for gifti support)');
 end;
 
 if (isempty(flat_dir))
